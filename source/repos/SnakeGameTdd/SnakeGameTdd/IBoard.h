@@ -26,7 +26,7 @@ public:
 	virtual bool checkVectorForFreeSpace() = 0;
 	bool SnakeEatAllApple = false;
 	virtual bool snaketailnotEq() = 0;
-
+	bool eatApple = false;
 protected:
 	int score = 0;
 	std::vector <std::vector<char> > vec2D;

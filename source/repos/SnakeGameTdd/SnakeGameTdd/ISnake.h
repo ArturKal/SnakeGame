@@ -29,7 +29,7 @@ public:
 	bool endGame = false;
 
 	ICoord * snakeTail;
-
+	ICoord *fieldToClear;
 protected:
 	int Xcolumn;
 	int Yrow;

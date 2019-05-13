@@ -74,7 +74,10 @@ void Snake::setSnakeTail()
 	if (Coord_Container.size() >= snakeLength) //>=  ???
 	{
 		snakeTail = 
-			new Coord( Coord_Container[0].getCoordX(), Coord_Container[0].getCoordY() );
+			new Coord( Coord_Container[1].getCoordX(), Coord_Container[1].getCoordY() );
+
+		fieldToClear =
+			new Coord(Coord_Container[0].getCoordX(), Coord_Container[0].getCoordY());
 
 	Coord_Container.pop_front(); //Removes the first element of the container
 	}

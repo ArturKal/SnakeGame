@@ -123,8 +123,11 @@ void Board::SnakeEatsApple()
 			appleInterface->putRandomAppleOnboard();
 
 		} while (vec2D[appleInterface->getAppleCoordX()]
-			[appleInterface->getAppleCoordY()] != '.' );
+			[appleInterface->getAppleCoordY()] != '.');
+		eatApple = true;
 	}
+	else
+		eatApple = false;
 }
 
 bool Board::checkSegmentsV(int cx, int cy)
@@ -195,11 +198,11 @@ bool  Board::checkVectorForFreeSpace()
 bool Board::snaketailnotEq()
 {
 	
-	if (snakeIntrface->snakeTail != nullptr)
+	if (snakeIntrface->fieldToClear != nullptr)
 	{
-		if(snakeIntrface->snakeTail->getCoordX() 
+		if(snakeIntrface->fieldToClear->getCoordX()
 			== snakeIntrface->getSnakeHead()->getCoordX()
-			&& (snakeIntrface->snakeTail->getCoordY() 
+			&& (snakeIntrface->fieldToClear->getCoordY()
 				== snakeIntrface->getSnakeHead()->getCoordY()))
 			return true;
 	}
