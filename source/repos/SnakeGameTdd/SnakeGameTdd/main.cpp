@@ -23,7 +23,7 @@ int main()
 	//std::cout << "ART" << Iboard->getvectorCoord(7, 7);
 	for (; ; )
 	{
-		Sleep(400);
+		Sleep(600);
 		while (_kbhit())
 		{
 			char drct = _getch();

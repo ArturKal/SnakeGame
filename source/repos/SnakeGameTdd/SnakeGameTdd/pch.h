@@ -19,6 +19,6 @@
 
 // TODO: add headers that you want to pre-compile here
 #include "IBoard.h"
-static const int BOARDSIZE = 3;
+static const int BOARDSIZE = 15;
 
 #endif //PCH_H
