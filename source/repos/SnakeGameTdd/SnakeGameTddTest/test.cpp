@@ -38,11 +38,11 @@ TEST(TestSnake , CreateSnakeInstanceAndSetSnakeHeadCoordinatedInTheCenterOfTheBo
 
 TEST(TestSnake, CreateSnakeInstanceAndSetSnakeHeadCoordinatedByCoordObjectValues)
 {
-	ICoord * coord = new Coord(10, 8);
+	ICoord * coord = new Coord((BOARDSIZE - 2), 8);
 	ISnake * snake = new Snake(coord);
 
 	EXPECT_EQ(snake->getSnakeHead(), coord);
-	EXPECT_GE(snake->getSnakeHead()->getCoordX(), 10);
+	EXPECT_GE(snake->getSnakeHead()->getCoordX(), (BOARDSIZE - 2));
 	EXPECT_LE(snake->getSnakeHead()->getCoordY(), 8);
 	delete snake;
 	delete coord;
@@ -176,8 +176,8 @@ TEST(TestSnake, putHeadSnakeCoordinatesToDequeContainerUsingGMOCK)
 	using::testing::Return;
 	using::testing::AnyNumber;
 
-	int returnValue = 12;
-	int returnValueTwo = 7;
+	int returnValue = (BOARDSIZE - 2);
+	int returnValueTwo = (BOARDSIZE/2);
 	MockCoord * mCoord = new MockCoord();
 	ISnake *  snake = new Snake(mCoord);
 
@@ -186,8 +186,8 @@ TEST(TestSnake, putHeadSnakeCoordinatesToDequeContainerUsingGMOCK)
 
 	snake->putSnakeHeadCoorinatesToDeque();
 	ASSERT_EQ(snake->getCoord_Container().size(), 1);
-	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordX(), 12);
-	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordY(), 7);
+	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordX(), (BOARDSIZE - 2));
+	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordY(), (BOARDSIZE / 2));
 	delete mCoord;
 	delete snake;
 }
@@ -251,12 +251,12 @@ TEST(TestSnake, SnakeReachedTheBoardEndGMOCK)
 
 TEST(TestSnake, SnakeReachedTheBoardEndTwice)
 {
-	ICoord * coord = new Coord(14, 14);
+	ICoord * coord = new Coord((BOARDSIZE - 1), (BOARDSIZE - 1));
 	ISnake * snake = new Snake(coord);
 
 	snake->changeSnakeHeadCoordinates(snake->getDirection()); //right
 	snake->setDirection('s'); //key w is up
-	compareSnakeHeadCoord(snake, 14, 0);
+	compareSnakeHeadCoord(snake, (BOARDSIZE - 1), 0);
 	snake->changeSnakeHeadCoordinates(snake->getDirection()); //up
 	compareSnakeHeadCoord(snake, 0 ,0);
 	EXPECT_EQ(snake->getCoord_Container().size() , 2);
@@ -268,48 +268,83 @@ TEST(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 {
 	ICoord * coord = new Coord(5, 5); //snake tail [5,5]
 	ISnake * snake = new Snake(coord);
-	snake->changeSnakeHeadCoordinates(snake->getDirection()); //right , deque [5,6]
-	snake->setSnakeTail();
-	snake->changeSnakeHeadCoordinates(snake->getDirection()); //right , deque [5,6][5,7]
-	snake->setSnakeTail();
-
+	for (int i = 0; i < 2; ++i)
+	{
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //right , deque [5,6][5,7]
+		snake->setSnakeTail();
+	}
 	compareSnakeHeadCoord(snake, 5, 7);
 	EXPECT_EQ(snake->getCoord_Container().size(), 1);
+	compareCoordValues(snake->snakeTail, 5, 6);
+	compareCoordValues(new Coord (snake->getCoord_Container().at(0)) , 5, 6);
 
-	ASSERT_EQ(snake->snakeTail->getCoordX() , 5);
-	ASSERT_EQ(snake->snakeTail->getCoordY() , 6);
-	
-	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), 5 );
-	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), 6);
-
-	delete coord;
-	delete snake;
+	delete coord;	delete snake;
 }
 
 
-TEST(TestSnake, SnakeMovesRigtTwoFieldAndEatAppleSnakeTail)
+TEST(TestSnake, SnakeMovesRigtTwoFieldAndCrossBorder)
  {
-	ICoord * coord = new Coord(5, BOARDSIZE - 1); //snake tail [5,5]
+	ICoord * coord = new Coord(5, BOARDSIZE - 1); //snake tail [5,14]
 	ISnake * snake = new Snake(coord);
-	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [14,5]
+	
+	snake->changeSnakeHeadCoordinates(snake->getDirection());//right  [5,14] ->sh[5,0] not in container
 	snake->setSnakeTail();//didn't call container=1 snakeLength=2
-	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [0,5][1,5]
+	snake->changeSnakeHeadCoordinates(snake->getDirection());//  fireldToclear-><5,14>,st->[5,0] ->sh[5,1]
+	snake->setSnakeTail(); //<5,14> [5, 0]
+	snake->changeSnakeHeadCoordinates(snake->getDirection());//deque <5,0>[5,1] ->5,2
 	snake->setSnakeTail();
 	
-	compareSnakeHeadCoord(snake, 5, 1);
+	compareSnakeHeadCoord(snake, 5, 2);
 	EXPECT_EQ(snake->getCoord_Container().size(), 1);
-	EXPECT_EQ(snake->fieldToClear->getCoordX(), 5);
-	EXPECT_EQ(snake->fieldToClear->getCoordY(), 14);
-	ASSERT_EQ(snake->snakeTail->getCoordX(), 5);
-	ASSERT_EQ(snake->snakeTail->getCoordY(), 0);
-	
-	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), 5);
-	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), 0);
-	
-	delete coord;
-	delete snake;
-	}
+	compareCoordValues(snake->fieldToClear, 5, 0);
+	compareCoordValues(snake->snakeTail, 5, 1);
+	compareCoordValues(new Coord(snake->getCoord_Container().at(0)), 5, 1);
 
+	delete coord;	delete snake;
+}
+
+TEST(TestSnake, SnakeMovesToTheRightUntilHeFindsHimselfInTheSamePositionAndThenMovesUpCrossingTheBoundariesTwice)
+{
+	ICoord * coord = new Coord(0, BOARDSIZE - 1); //snake tail [0,14]
+	ISnake * snake = new Snake(coord);
+
+	for (int i = 0; i <= BOARDSIZE; ++i)
+	{
+		if (i == BOARDSIZE)
+			snake->setDirection('w');
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //right , deque [0,0][1,0]..
+		snake->setSnakeTail();
+	}
+	compareSnakeHeadCoord(snake, (BOARDSIZE-1), (BOARDSIZE-1) );
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
+	compareCoordValues(snake->fieldToClear, 0, (BOARDSIZE - 2));
+	compareCoordValues(snake->snakeTail, 0, (BOARDSIZE - 1));
+	compareCoordValues(new Coord(snake->getCoord_Container().at(0)), 0, (BOARDSIZE - 1));
+	EXPECT_THROW(snake->getCoord_Container().at(1), std::out_of_range); //only 1 element at zero position
+	delete coord;	delete snake;
+}
+
+TEST(TestSnake, SnakeMovesDownUntilHeFindsHimselfInTheSamePositionAndThenMovesLeftCrossingTheBoundariesTwice)
+{
+	ICoord * coord = new Coord(BOARDSIZE - 1, 0); //snake tail [14,0]
+	ISnake * snake = new Snake(coord);
+	snake->setDirection('s');//down key was pressed
+
+	for (int i = 0; i <= BOARDSIZE; ++i)
+	{
+		if (i == BOARDSIZE)
+			snake->setDirection('a');
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //left , deque [0,0][0,1]...
+		snake->setSnakeTail();
+	}
+	compareSnakeHeadCoord(snake, (BOARDSIZE - 1), (BOARDSIZE - 1)); //[14,0]
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
+	compareCoordValues(snake->fieldToClear, (BOARDSIZE - 2), 0);
+	compareCoordValues(snake->snakeTail, (BOARDSIZE - 1),0);
+	compareCoordValues(new Coord(snake->getCoord_Container().at(0)), (BOARDSIZE - 1),0);
+	EXPECT_THROW(snake->getCoord_Container().at(1), std::out_of_range); //only 1 element at zero position
+	delete coord;	delete snake;
+}
 //========================================================================================================
 //===========================================COORD TEST===================================================
 
@@ -472,16 +507,16 @@ TEST(TestBoard, TestDrawSnakeOnBoard)
 TEST(TestMockSnake, createMockSnakeAndPutCoordinatesOfSnakeHeadOnTheBoard)
 {
 	using::testing::Return;
-	ICoord * coord = new Coord(5, 5);
+	ICoord * coord = new Coord(BOARDSIZE-2, BOARDSIZE - 2);
 	MockSnake * mSnake = new MockSnake();
 	
 	EXPECT_CALL(*mSnake, getSnakeHead()).WillRepeatedly(Return(coord));
 
 	IBoard * board = new Board(mSnake , BOARDSIZE);
 
-	ASSERT_EQ(board->getvectorSize() , 15);
-	ASSERT_EQ((mSnake->getSnakeHead())->getCoordX(), 5);
-	ASSERT_EQ((mSnake->getSnakeHead())->getCoordY(), 5);
+	ASSERT_EQ(board->getvectorSize() , BOARDSIZE);
+	ASSERT_EQ((mSnake->getSnakeHead())->getCoordX(), (BOARDSIZE - 2));
+	ASSERT_EQ((mSnake->getSnakeHead())->getCoordY(), (BOARDSIZE - 2));
 
 	ASSERT_EQ(board->getvectorCoord((mSnake->getSnakeHead())->getCoordX() , 
 									(mSnake->getSnakeHead())->getCoordY()), 
@@ -551,17 +586,17 @@ TEST(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
 TEST(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
 {
 	using::testing::Return;
-	ICoord * expCoord = new Coord(0, 13);
+	ICoord * expCoord = new Coord(0, (BOARDSIZE - 2));
 	MockCoord * mCoord = new MockCoord();
 	ISnake * snake = new Snake(mCoord);
 
 	EXPECT_CALL(*mCoord, getCoordX()).WillRepeatedly(Return(0));
-	EXPECT_CALL(*mCoord, getCoordY()).Times(5).WillRepeatedly(Return(13));
+	EXPECT_CALL(*mCoord, getCoordY()).Times(5).WillRepeatedly(Return((BOARDSIZE - 2)));
 
 	IBoard * board = new Board(snake, BOARDSIZE);
-	EXPECT_CALL(*mCoord, setCoordY(14)).Times(1);
-	EXPECT_CALL(*mCoord, getCoordY()).Times(5).WillRepeatedly(Return(14));
-	EXPECT_CALL(*mCoord, setCoordY(15)).Times(1);
+	EXPECT_CALL(*mCoord, setCoordY((BOARDSIZE - 1))).Times(1);
+	EXPECT_CALL(*mCoord, getCoordY()).Times(5).WillRepeatedly(Return((BOARDSIZE - 1)));
+	EXPECT_CALL(*mCoord, setCoordY((BOARDSIZE ))).Times(1);
 
 	snake->changeSnakeHeadCoordinates(snake->getDirection()); //5 time call
 	board->drawSnakeOnBoardbyIcoord();
@@ -573,14 +608,14 @@ TEST(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
 	board->drawSnakeOnBoardbyIcoord();
 
 	EXPECT_EQ(snake->getCoord_Container().size(), 2);
-	EXPECT_EQ(board->getvectorCoord(0, 13), 'o');
-	EXPECT_EQ(board->getvectorCoord(0, 14), 'o');
-	EXPECT_EQ(board->getvectorCoord(0, 0), 'o');
+	EXPECT_EQ(board->getvectorCoord(0, (BOARDSIZE - 2)), 'o');
+	EXPECT_EQ(board->getvectorCoord(0, (BOARDSIZE - 1)), 'o');
+	EXPECT_EQ(board->getvectorCoord(0, (BOARDSIZE - BOARDSIZE )), 'o');
 	for (int i = 0; i < BOARDSIZE; i++)
 	{
 		for (int j = 0; j < BOARDSIZE; j++)
 		{
-			if ((i == 0 && j == 13) || (i == 0 && j == 14) || (i == 0 && j == 0))
+			if ((i == 0 && j == (BOARDSIZE - 2)) || (i == 0 && j == (BOARDSIZE - 1)) || (i == 0 && j == 0))
 				EXPECT_EQ(board->getvectorCoord(i, j), 'o')
 				<< "Value of X: " << i << "Value of Y: " << j << "is " << board->getvectorCoord(i, j);
 			else
@@ -616,10 +651,10 @@ bool compareCoordsAreNotEq(ICoord *  P1, ICoord *  P2)
 
 TEST(TestApple, CreateAppleInstanceWithDefaultConstructor)
 {
-	IApple * apple = new Apple();
+	IApple * apple = new Apple(); //BOARDSIZE/2-1
 
-	EXPECT_EQ(apple->getAppleCoordX() , 6);
-	EXPECT_EQ(apple->getAppleCoordY() , 6);
+	EXPECT_EQ(apple->getAppleCoordX() , BOARDSIZE / 2 - 1); 
+	EXPECT_EQ(apple->getAppleCoordY() , BOARDSIZE / 2 - 1);
 
 	delete apple;
 }
