@@ -268,18 +268,16 @@ TEST(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 {
 	ICoord * coord = new Coord(5, 5); //snake tail [5,5]
 	ISnake * snake = new Snake(coord);
-	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [5,6]
-	snake->setSnakeTail();//didn't call container=1 snakeLength=2
-
-	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [5,6][5,7]
+	snake->changeSnakeHeadCoordinates(snake->getDirection()); //right , deque [5,6]
+	snake->setSnakeTail();
+	snake->changeSnakeHeadCoordinates(snake->getDirection()); //right , deque [5,6][5,7]
 	snake->setSnakeTail();
 
 	compareSnakeHeadCoord(snake, 5, 7);
 	EXPECT_EQ(snake->getCoord_Container().size(), 1);
-	EXPECT_EQ(snake->fieldToClear->getCoordX(), 5);
-	EXPECT_EQ(snake->fieldToClear->getCoordX(), 5);
+
 	ASSERT_EQ(snake->snakeTail->getCoordX() , 5);
-	ASSERT_EQ(snake->snakeTail->getCoordY() , 6);
+	ASSERT_EQ(snake->snakeTail->getCoordY() , 5);
 	
 	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), 5 );
 	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), 6);
@@ -288,29 +286,6 @@ TEST(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 	delete snake;
 }
 
-
-TEST(TestSnake, SnakeMovesRigtTwoFieldAndEatAppleSnakeTail)
-{
-	ICoord* coord = new Coord(5, BOARDSIZE - 1); //snake tail [5,5]
-	ISnake* snake = new Snake(coord);
-	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [14,5]
-	snake->setSnakeTail();//didn't call container=1 snakeLength=2
-	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [0,5][1,5]
-	snake->setSnakeTail();
-
-	compareSnakeHeadCoord(snake, 5, 1);
-	EXPECT_EQ(snake->getCoord_Container().size(), 1);
-	EXPECT_EQ(snake->fieldToClear->getCoordX(), 5);
-	EXPECT_EQ(snake->fieldToClear->getCoordY(), 14);
-	ASSERT_EQ(snake->snakeTail->getCoordX(), 5);
-	ASSERT_EQ(snake->snakeTail->getCoordY(), 0);
-
-	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), 5);
-	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), 0);
-
-	delete coord;
-	delete snake;
-}
 
 //========================================================================================================
 //===========================================COORD TEST===================================================
@@ -328,13 +303,14 @@ TEST(TestCoord, CreateCoordInstanceAndSetCoordinates)
 {
 	int Xcoord = 4;
 	int Ycoord = 6;
-	ICoord * Icoord = new Coord(4,6);
+	ICoord * Icoord = new Coord();
 	
 	Icoord->setCoordX(Xcoord);
 	Icoord->setCoordY(Ycoord);
 	ASSERT_EQ(Icoord->getCoordX() , 4);
 	ASSERT_EQ(Icoord->getCoordY() , 6);
 	delete Icoord;
+
 }
 
 TEST(TestCoord, CreateCoordInstanceSetCoordinatesAndPrintThemInConsole)
