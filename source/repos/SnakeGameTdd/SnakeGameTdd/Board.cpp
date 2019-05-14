@@ -110,7 +110,7 @@ void Board::SnakeEatsApple()
 		&& snakeIntrface->getSnakeHead()->getCoordY() == appleInterface->getAppleCoordY())
 	{
 
-		snakeIntrface->snakeLength++;
+		snakeIntrface->setSnakeLength();
 		//std::cout << "ZJADAM!!!!!!!!!!!!!!!";
 		setScore();
 		do {
@@ -119,15 +119,41 @@ void Board::SnakeEatsApple()
 				SnakeEatAllApple = true;
 				break;
 			}
-
 			appleInterface->putRandomAppleOnboard();
 
-		} while (vec2D[appleInterface->getAppleCoordX()]
-			[appleInterface->getAppleCoordY()] != '.');
+		} while (getVector().at(appleInterface->getAppleCoordX())
+							.at(appleInterface->getAppleCoordY()) 
+								!= '.');
 		eatApple = true;
 	}
 	else
 		eatApple = false;
+	
+	//to by think about
+	if (!eatApple) //don't delete last element in vector
+	{
+		snakeIntrface->setSnakeTail(); //delete last element from container
+		if (snakeIntrface->getFieldToClear() != snakeIntrface->getSnakeTail()) //valid only at the firs game row
+		{
+			setvectorCoord(
+				snakeIntrface->getFieldToClear()->getCoordX(),
+				snakeIntrface->getFieldToClear()->getCoordY(),
+				'.');
+		}
+		//else
+		//	std::cout << "ARTUR WYKASUJ TA LINIE";
+	}
+
+	if (SnakeEatAllApple)
+	{
+		for (int x = 0; x < BOARDSIZE; x++)
+		{
+			for (int y = 0; y < BOARDSIZE; y++)
+				setvectorCoord(x, y, 'X');
+		}
+		printVector();
+		std::cout << "\t\tWYGRALES TWOJ WYNIK : " << getScore() << " \n";
+	}
 }
 
 bool Board::checkSegmentsV(int cx, int cy)
@@ -198,11 +224,11 @@ bool  Board::checkVectorForFreeSpace()
 bool Board::snaketailnotEq()
 {
 	
-	if (snakeIntrface->fieldToClear != nullptr)
+	if (snakeIntrface->getFieldToClear() != nullptr)
 	{
-		if(snakeIntrface->fieldToClear->getCoordX()
+		if(snakeIntrface->getFieldToClear()->getCoordX()
 			== snakeIntrface->getSnakeHead()->getCoordX()
-			&& (snakeIntrface->fieldToClear->getCoordY()
+			&& (snakeIntrface->getFieldToClear()->getCoordY()
 				== snakeIntrface->getSnakeHead()->getCoordY()))
 			return true;
 	}

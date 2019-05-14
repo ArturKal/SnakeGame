@@ -24,8 +24,9 @@ public:
 	virtual int getvectorSize() = 0;
 	virtual std::vector<std::vector<char>> getVector() = 0;
 	virtual bool checkVectorForFreeSpace() = 0;
-	bool SnakeEatAllApple = false;
 	virtual bool snaketailnotEq() = 0;
+
+	bool SnakeEatAllApple = false;
 	bool eatApple = false;
 protected:
 	int score = 0;

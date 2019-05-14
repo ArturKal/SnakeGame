@@ -24,7 +24,12 @@ public:
 	int getYrow();
 	char getDirection();
 	ICoord * getSnakeHead();
+	ICoord * getSnakeTail();
+	ICoord * getFieldToClear();
 	std::deque<Coord> getCoord_Container();
+	int setSnakeLength();
+	int getSnakeLength();
+	bool getEndGame();
 
 
 	ICoord * Icoord;

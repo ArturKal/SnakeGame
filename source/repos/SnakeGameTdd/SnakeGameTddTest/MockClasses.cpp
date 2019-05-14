@@ -34,5 +34,10 @@ public:
 	MOCK_METHOD0(getYrow, int(void) );
 	MOCK_METHOD0(getDirection, char(void) );
 	MOCK_METHOD0(getSnakeHead , ICoord* (void));
+	MOCK_METHOD0(getSnakeTail, ICoord* (void));
+	MOCK_METHOD0(getFieldToClear, ICoord* (void));
 	MOCK_METHOD0(getCoord_Container , std::deque<Coord>(void));
+	MOCK_METHOD0(setSnakeLength, int(void));
+	MOCK_METHOD0(getSnakeLength, int(void));
+	MOCK_METHOD0(getEndGame, bool(void));
 };

@@ -25,6 +25,7 @@ Snake::Snake(ICoord * _coord) : Icoord(_coord)
 	snakeHead = Icoord;
 	//putSnakeHeadCoorinatesToDeque();
 	snakeTail = snakeHead;
+	fieldToClear = snakeTail; //Has to be set at begining
 }
 
 Snake::~Snake()
@@ -159,7 +160,31 @@ ICoord * Snake::getSnakeHead()
 	return snakeHead;
 }
 
+ICoord * Snake::getSnakeTail()
+{
+	return snakeTail;
+}
+
+ICoord * Snake::getFieldToClear()
+{
+	return fieldToClear;
+}
+
 std::deque<Coord> Snake::getCoord_Container()
 {
 	return Coord_Container;
+}
+
+int Snake::setSnakeLength()
+{
+	return snakeLength++;
+}
+int Snake::getSnakeLength()
+{
+	return snakeLength;
+}
+
+bool Snake::getEndGame()
+{
+	return endGame;
 }
