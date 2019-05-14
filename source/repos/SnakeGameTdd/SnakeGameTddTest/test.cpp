@@ -277,7 +277,7 @@ TEST(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 	EXPECT_EQ(snake->getCoord_Container().size(), 1);
 
 	ASSERT_EQ(snake->snakeTail->getCoordX() , 5);
-	ASSERT_EQ(snake->snakeTail->getCoordY() , 5);
+	ASSERT_EQ(snake->snakeTail->getCoordY() , 6);
 	
 	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), 5 );
 	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), 6);
@@ -286,6 +286,29 @@ TEST(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 	delete snake;
 }
 
+
+TEST(TestSnake, SnakeMovesRigtTwoFieldAndEatAppleSnakeTail)
+ {
+	ICoord * coord = new Coord(5, BOARDSIZE - 1); //snake tail [5,5]
+	ISnake * snake = new Snake(coord);
+	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [14,5]
+	snake->setSnakeTail();//didn't call container=1 snakeLength=2
+	snake->changeSnakeHeadCoordinates(snake->getDirection());//right , deque [0,5][1,5]
+	snake->setSnakeTail();
+	
+	compareSnakeHeadCoord(snake, 5, 1);
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
+	EXPECT_EQ(snake->fieldToClear->getCoordX(), 5);
+	EXPECT_EQ(snake->fieldToClear->getCoordY(), 14);
+	ASSERT_EQ(snake->snakeTail->getCoordX(), 5);
+	ASSERT_EQ(snake->snakeTail->getCoordY(), 0);
+	
+	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), 5);
+	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), 0);
+	
+	delete coord;
+	delete snake;
+	}
 
 //========================================================================================================
 //===========================================COORD TEST===================================================
