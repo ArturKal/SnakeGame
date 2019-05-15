@@ -9,6 +9,11 @@ Coord::Coord()
 	Yrow = BOARDSIZE / 2;
 }
 
+Coord::Coord(ICoord * _coord) : Icoord(_coord)
+{
+	coords = Icoord;
+}
+
 Coord::Coord(int x, int y) 
 {
 	try

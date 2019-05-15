@@ -6,6 +6,8 @@ class Coord :
 public:
 	Coord() ;
 	Coord(int x, int y);
+	Coord(ICoord * _coord);
+
 	~Coord() {};
 
 	int getCoordX();
@@ -20,5 +22,7 @@ public:
 	int compare(int a, int b);
 
 	std::string printCoordinates();
+	ICoord * Icoord;
+
 };
 

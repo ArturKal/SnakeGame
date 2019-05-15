@@ -17,5 +17,7 @@ public:
 protected:
 	int Xcolumn;
 	int Yrow;
+	ICoord * coords;
+
 };
 
