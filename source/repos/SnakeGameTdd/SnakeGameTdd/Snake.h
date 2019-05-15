@@ -15,8 +15,8 @@ public:
 	ICoord * changeSnakeHeadCoordinates(char _direction);
 	void checkIfSnakeReachEndOfTheBoard();
 	void setSnakeTail();
-	bool snakeHitItself(bool eg);
-	void putSnakeHeadCoorinatesToDeque();
+	bool snakeHitItself();
+	void putSnakeHeadCoorinatesToDeque(Coord& _snakeHead);
 
 	void setXcolumn(int _counter);
 	void setYrow(int _counter);

@@ -44,7 +44,8 @@ char Snake::setDirection(char moveKey)
 
 ICoord * Snake::changeSnakeHeadCoordinates(char _direction)
 {
-	putSnakeHeadCoorinatesToDeque();
+	Coord coords(snakeHead->getCoordX(), snakeHead->getCoordY());
+	putSnakeHeadCoorinatesToDeque(coords);
 
 	if (direction == 'u')
 	{
@@ -105,7 +106,7 @@ void Snake::checkIfSnakeReachEndOfTheBoard()
 	}
 }
 
-bool Snake::snakeHitItself(bool eg)
+bool Snake::snakeHitItself()
 {
 	for (auto x : Coord_Container)
 	{
@@ -119,7 +120,7 @@ bool Snake::snakeHitItself(bool eg)
 	return endGame;
 }
 
-void Snake::putSnakeHeadCoorinatesToDeque()
+void Snake::putSnakeHeadCoorinatesToDeque(Coord& _snakeHead)
 {/*
 	if (snakeTail != nullptr && 
 		(snakeTail->getCoordX() == snakeHead->getCoordX() 
@@ -130,8 +131,9 @@ void Snake::putSnakeHeadCoorinatesToDeque()
 		snakeTail->setCoordX(Coord_Container.at(1).getCoordX());
 		snakeTail->setCoordX(Coord_Container.at(1).getCoordY());
 	}*/
-	Coord coords(snakeHead->getCoordX(), snakeHead->getCoordY());
-	Coord_Container.push_back(coords); //put coordinates of snake head
+	//Coord coords(snakeHead->getCoordX(), snakeHead->getCoordY());
+	//_snakeHead = coords;
+	Coord_Container.push_back(_snakeHead); //put coordinates of snake head
 }
 
 void Snake::setXcolumn(int _counter)

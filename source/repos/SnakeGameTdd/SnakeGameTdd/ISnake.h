@@ -12,8 +12,8 @@ public:
 	virtual ICoord * changeSnakeHeadCoordinates(char _direction) = 0;
 	virtual void checkIfSnakeReachEndOfTheBoard() = 0;
 	virtual void setSnakeTail() = 0;
-	virtual bool snakeHitItself(bool eg) = 0;
-	virtual void putSnakeHeadCoorinatesToDeque() = 0;
+	virtual bool snakeHitItself() = 0;
+	virtual void putSnakeHeadCoorinatesToDeque(Coord& _snakeHead) = 0;
 
 	virtual void setXcolumn(int _counter) = 0;
 	virtual void setYrow(int _counter) = 0;

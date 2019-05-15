@@ -31,12 +31,10 @@ int main()
 		   
 		Isnake->changeSnakeHeadCoordinates(Isnake->getDirection()); //add head to cont and chceck borders
 		Iboard->drawSnakeOnBoardbyIcoord();
-		Isnake->snakeHitItself(true);
 		
-		if (Isnake->getEndGame())			
+		if (Isnake->snakeHitItself())
 			{std::cout << "\n\n\t!! KONIEC GRY !!\n\n\n"; _getch();	break; }
- 	
-		
+	
 		Iboard->SnakeEatsApple(); //put random apple on '.' field	
 		if (Iboard->SnakeEatAllApple) { break; }
 
