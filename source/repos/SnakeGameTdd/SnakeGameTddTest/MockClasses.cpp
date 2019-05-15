@@ -25,8 +25,8 @@ public:
 	MOCK_METHOD1(changeSnakeHeadCoordinates , ICoord * (char _direction) );
 	MOCK_METHOD0(checkIfSnakeReachEndOfTheBoard , void(void));
 	MOCK_METHOD0(setSnakeTail, void(void));
-	MOCK_METHOD1(snakeHitItself, bool(bool eq));
-	MOCK_METHOD0(putSnakeHeadCoorinatesToDeque, void(void));
+	MOCK_METHOD0(snakeHitItself, bool());
+	MOCK_METHOD1(putSnakeHeadCoorinatesToDeque, void(Coord& coord));
 
 	MOCK_METHOD1(setXcolumn , void(int _counter) );
 	MOCK_METHOD1(setYrow, void(int _counter) );

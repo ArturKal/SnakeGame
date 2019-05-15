@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include <iostream>
 #include <vector>
 #include <deque>
@@ -151,7 +151,8 @@ TEST(TestSnake, ExpectToThrowOutOfrangeException)
 	ICoord * coord = new Coord(2, 3);
 	ISnake *  snake = new Snake(coord);
 	EXPECT_THROW(snake->getCoord_Container().at(0), std::out_of_range);
-	snake->putSnakeHeadCoorinatesToDeque();
+	Coord coordX(snake->getSnakeHead());
+	snake->putSnakeHeadCoorinatesToDeque(coordX);
 	ASSERT_EQ(snake->getCoord_Container().size(), 1);
 	EXPECT_THROW(snake->getCoord_Container().at(1), std::out_of_range);
 	delete coord;
@@ -162,7 +163,8 @@ TEST(TestSnake, putHeadSnakeCoordinatesToDequeContainer)
 {
 	ICoord * coord = new Coord(2,3);
 	ISnake *  snake = new Snake(coord);
-	snake->putSnakeHeadCoorinatesToDeque();
+	Coord x(coord->getCoordX() , coord->getCoordY());
+	snake->putSnakeHeadCoorinatesToDeque(x);
 	ASSERT_EQ(snake->getCoord_Container().size(), 1);
 	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordX(), 2);
 	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordY(), 3);
@@ -184,7 +186,8 @@ TEST(TestSnake, putHeadSnakeCoordinatesToDequeContainerUsingGMOCK)
 	EXPECT_CALL(*mCoord, getCoordX()).WillRepeatedly(Return(returnValue));
 	EXPECT_CALL(*mCoord, getCoordY()).WillRepeatedly(Return(returnValueTwo));
 
-	snake->putSnakeHeadCoorinatesToDeque();
+	snake->putSnakeHeadCoorinatesToDeque( 
+		Coord(snake->getSnakeHead()->getCoordX() , snake->getSnakeHead()->getCoordY()));
 	ASSERT_EQ(snake->getCoord_Container().size(), 1);
 	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordX(), (BOARDSIZE - 2));
 	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordY(), (BOARDSIZE / 2));
@@ -647,6 +650,66 @@ TEST(TestBoard, SnakeMoveOnBordTwoFieldEeatsAnAppleAndGrows)
 	delete board, coord, snake, apple;
 }
 
+TEST(TestBoard, SnakeMoveOnBordAndHitItself)
+{
+	int size = BOARDSIZE / 2; //7
+	ISnake * snake = new Snake(new Coord(1,0));
+	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 0));	//Dodaje nowy element na końcu kontenera » standard C++ ♦ deque. (metoda)
+	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 1));
+	snake->putSnakeHeadCoorinatesToDeque(Coord(1, 1));
+
+	compareCoordValues(new Coord(snake->getCoord_Container().at(0)) , 0,0);
+	compareCoordValues(new Coord(snake->getCoord_Container().at(1)), 0, 1);
+	compareCoordValues(new Coord(snake->getCoord_Container().at(2)), 1, 1);
+	/*	#####
+		#O O#
+		#O>O# -> snake moves right hit his body
+		#####
+	*/
+	ASSERT_FALSE(snake->snakeHitItself());
+	snake->changeSnakeHeadCoordinates(snake->getDirection());
+	ASSERT_TRUE (snake->snakeHitItself());
+ }
+
+TEST(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
+{
+	int size = BOARDSIZE / 2; //7
+	ISnake * snake = new Snake(new Coord(1, 0));
+	IApple * apple = new Apple(1, 1);
+	IApple * apple2 = new Apple(1, 2);
+	IBoard * board = new Board(snake, apple, BOARDSIZE);
+
+	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 0)); //snake Tail
+	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 1));
+	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 2));
+	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 3));
+	snake->putSnakeHeadCoorinatesToDeque(Coord(1, 3));	//Dodaje nowy element na końcu kontenera » standard C++ ♦ deque. (metoda)
+
+	compareCoordValues(new Coord(snake->getCoord_Container().at(0)), 0, 0);
+	compareCoordValues(new Coord(snake->getCoord_Container().at(4)), 1, 3);
+	/*	#########
+		#O O O O#
+		#O>X>X O# -> snake moves right hit his body
+		#########
+	*/
+	ASSERT_FALSE(snake->snakeHitItself());
+	snake->changeSnakeHeadCoordinates(snake->getDirection());
+	board->SnakeEatsApple();
+	ASSERT_TRUE(board->eatApple);
+	
+	apple->getAppleCoords()->setCoordX(1);
+	apple->getAppleCoords()->setCoordY(2);
+	
+	snake->changeSnakeHeadCoordinates(snake->getDirection());
+	board->SnakeEatsApple();
+	ASSERT_TRUE(board->eatApple);
+
+	ASSERT_FALSE(snake->snakeHitItself());
+	snake->changeSnakeHeadCoordinates(snake->getDirection());
+	ASSERT_TRUE(snake->snakeHitItself());
+}
+
+//=============================================================================================
 //Helping Methods:
 void compareSnakeHeadCoord(ISnake *  snake, int x, int y)
 {
