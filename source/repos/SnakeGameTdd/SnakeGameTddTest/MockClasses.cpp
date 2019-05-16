@@ -3,6 +3,8 @@
 #include "../SnakeGameTdd/ICoord.cpp"
 #include "../SnakeGameTdd/ISnake.h"
 #include "../SnakeGameTdd/ISnake.cpp"
+#include "../SnakeGameTdd/IApple.h"
+#include "../SnakeGameTdd/IApple.cpp"
 
 class MockCoord : public ICoord
 {
@@ -35,4 +37,13 @@ public:
 	MOCK_METHOD0(setSnakeLength, int(void));
 	MOCK_METHOD0(getSnakeLength, int(void));
 	MOCK_METHOD0(getEndGame, bool(void));
+};
+
+class MockApple : public IApple
+{
+public:
+	MOCK_METHOD0(putRandomAppleOnboard, void(void));
+	MOCK_METHOD0(getAppleCoordX, int(void));
+	MOCK_METHOD0(getAppleCoordY, int(void));
+	MOCK_METHOD0(getAppleCoords, ICoord* (void));
 };

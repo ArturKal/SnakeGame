@@ -78,4 +78,5 @@ int Coord::compare(int a, int b)
 	if (a > BOARDSIZE || b > BOARDSIZE) {
 		throw std::runtime_error("Coord parameter cannot be bigger then Boardsize value, changed wrong value to 0\n");
 	}
+	return a;
 }

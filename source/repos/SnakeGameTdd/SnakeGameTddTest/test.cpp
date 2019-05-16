@@ -739,6 +739,76 @@ TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 	compareCoordValues(snake->getSnakeHead() , size, 1); //snake starts and end in the same point
 	delete board, snake, apple;
 }
+
+TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20)
+{
+	int size = BOARDSIZE / 2; //7
+	int numberOfeatedApples = 0;
+	ISnake * snake = new Snake(new Coord(BOARDSIZE / 2, size - size));
+	IApple * apple = new Apple(new Coord());
+	IBoard * board = new Board(snake, apple, BOARDSIZE);
+
+	int counter = 0;
+	int numberOfEatApple = 0;
+
+	for (;  ; )
+	{
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //add head to cont and chceck borders
+		if (counter == BOARDSIZE + 1) {
+			snake->setDirection('s');
+			counter = 0;
+		}
+		else
+			snake->setDirection('d');
+		board->drawSnakeOnBoardbyIcoord();
+		board->SnakeEatsApple(); //put random apple on '.' field	
+		if (board->eatApple) numberOfEatApple++;
+		board->drawApplOnBoardbyIcoord();
+		counter++;
+
+		if (snake->getSnakeLength() == 20)
+		{
+			break;
+		}
+	}
+	
+	EXPECT_EQ(snake->getSnakeLength(), 20);
+	delete board, snake, apple;
+}
+
+TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIsNoSpaceAngGameEnds)
+{
+	using::testing::Return;
+	int size = BOARDSIZE / 2; //7
+	ISnake * snake = new Snake(new Coord(BOARDSIZE / 2, size - size));
+	
+	MockApple * mApple = new MockApple();
+	EXPECT_CALL(*mApple , getAppleCoords()).WillRepeatedly(Return(new Coord(BOARDSIZE / 2, size+1 - size)));
+	//EXPECT_CALL(*mApple , getAppleCoordX()).Times(6).WillRepeatedly(Return(7));
+	//EXPECT_CALL(*mApple, getAppleCoordY()).Times(6).WillRepeatedly(Return(1));
+
+	EXPECT_CALL(*mApple, getAppleCoordY()).WillRepeatedly(Return(11));
+	//EXPECT_CALL(*mApple , putRandomAppleOnboard()).Times(2).WillRepeatedly(Return());
+
+	IBoard * board = new Board(snake, mApple, BOARDSIZE);
+
+	compareCoordValues(snake->getSnakeHead(), 7, 0);
+	snake->changeSnakeHeadCoordinates(snake->getDirection()); //add head to cont and chceck borders
+	board->drawSnakeOnBoardbyIcoord();
+	board->SnakeEatsApple(); //put random apple on '.' field	
+	
+	EXPECT_EQ(mApple->getAppleCoords()->getCoordY(), snake->getSnakeHead()->getCoordY());
+	//EXPECT_TRUE(board->eatApple);
+
+	//board->drawApplOnBoardbyIcoord();
+	//board->printVector();
+	//EXPECT_TRUE(board->eatApple);
+
+	EXPECT_EQ(mApple->getAppleCoords()->getCoordX() , 7);
+	EXPECT_EQ(mApple->getAppleCoords()->getCoordY(), 1);
+
+	delete board, snake, mApple;
+}
 //=============================================================================================
 //Helping Methods:
 void compareSnakeHeadCoord(ISnake *  snake, int x, int y)
