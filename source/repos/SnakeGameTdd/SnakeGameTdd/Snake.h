@@ -5,6 +5,7 @@ class Snake :
 	public ISnake
 {
 public:
+	//Constructors
 	Snake();
 	Snake(int x, int y);
 	Snake(ICoord * _coord);
@@ -13,15 +14,10 @@ public:
 
 	char setDirection(char moveKey) ;
 	ICoord * changeSnakeHeadCoordinates(char _direction);
-	void checkIfSnakeReachEndOfTheBoard();
 	void setSnakeTail();
 	bool snakeHitItself();
 	void putSnakeHeadCoorinatesToDeque(Coord& _snakeHead);
-
-	void setXcolumn(int _counter);
-	void setYrow(int _counter);
-	int getXcolumn();
-	int getYrow();
+	// getters and setters methods:
 	char getDirection();
 	ICoord * getSnakeHead();
 	ICoord * getSnakeTail();
@@ -30,8 +26,7 @@ public:
 	int setSnakeLength();
 	int getSnakeLength();
 	bool getEndGame();
-
-
+protected:
 	ICoord * Icoord;
 };
 

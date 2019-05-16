@@ -1,5 +1,4 @@
 // SnakeGameTdd.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 #include "pch.h"
 #include <iostream>
 #include <conio.h>
@@ -10,7 +9,6 @@
 #include "Snake.h"
 #include "Coord.h"
 #include "Apple.h"
-
 
 int main()
 {
@@ -38,7 +36,6 @@ int main()
 		if (Iboard->SnakeEatAllApple) { break; }
 
 		Iboard->drawApplOnBoardbyIcoord();
-		//if (Iboard->snaketailnotEq())		//	Iboard->drawSnakeOnBoardbyIcoord(); ???
 		Iboard->printVector();
 
 		std::cout << "\t\tWYNIK " << Iboard->getScore() << " \n";
@@ -50,7 +47,6 @@ int main()
 		if (Isnake->getFieldToClear() != nullptr)
 			std::cout << "Field To Clear: " << Isnake->getFieldToClear()->printCoordinates() << " \n";
 	}
-
 	//delete instances after
 	delete Isnake;	delete Iboard;	delete Iapple;
 }

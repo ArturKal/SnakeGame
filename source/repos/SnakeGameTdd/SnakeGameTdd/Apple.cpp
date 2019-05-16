@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Apple.h"
 
-
+//Constructors:
 Apple::Apple()
 {
 	ICoord * _coord = new Coord(BOARDSIZE/2-1 , BOARDSIZE/2-1);
@@ -23,6 +23,7 @@ Apple::Apple(int x , int y)
 	AppleCoord = IcoordApple;
 }
 
+//Methods:
 void Apple::putRandomAppleOnboard()
 {
 	int rnd = rand() % (BOARDSIZE*BOARDSIZE);
@@ -45,6 +46,8 @@ ICoord * Apple::getAppleCoords()
 {
 	return AppleCoord;
 }
+
+//Destructor:
 Apple::~Apple()
 {
 }

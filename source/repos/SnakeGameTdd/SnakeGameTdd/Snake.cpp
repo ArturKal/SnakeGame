@@ -2,6 +2,7 @@
 #include "Snake.h"
 #include <iostream>
 
+//Constructors:
 Snake::Snake()
 {
 	ICoord * _coord = new Coord();
@@ -9,29 +10,26 @@ Snake::Snake()
 	snakeHead = Icoord;
 }
 
-Snake::Snake(int x, int y) //DEPRECATED
+Snake::Snake(int x, int y)
 {
 	ICoord * _coord = new Coord(x ,y);
 	Icoord = _coord;
 	snakeHead = Icoord;
-
-	//std::cout << "CONSTRUKTOR\n";
-	this->Xcolumn = x;
-	this->Yrow = y;
 }
 
 Snake::Snake(ICoord * _coord) : Icoord(_coord)
 {
 	snakeHead = Icoord;
-	//putSnakeHeadCoorinatesToDeque();
 	snakeTail = snakeHead;
 	fieldToClear = snakeTail; //Has to be set at begining
 }
 
+//Destructor:
 Snake::~Snake()
 {
 }
 
+//Methods:
 char Snake::setDirection(char moveKey)
 {
 	if (moveKey == 'w' && (direction == 'l' || direction == 'r')) return direction = 'u';
@@ -62,47 +60,24 @@ ICoord * Snake::changeSnakeHeadCoordinates(char _direction)
 	if (direction == 'r')
 	{
 		snakeHead->setCoordY(snakeHead->getCoordY() + 1);
-		//snakeHead.Yrow++;
 	}
 
-	//checkIfSnakeReachEndOfTheBoard(); 
-	//method not needed anymore set in COORD class
-	
 	return snakeHead;
 }
 
 void Snake::setSnakeTail()
 {
-	if (Coord_Container.size() >= snakeLength) //>=  ???
+	if (Coord_Container.size() >= snakeLength)
 	{
 		snakeTail = 
-			new Coord( Coord_Container[1].getCoordX(), Coord_Container[1].getCoordY() );
+			new Coord(Coord_Container.at(1).getCoordX(), 
+						Coord_Container.at(1).getCoordY());
 
 		fieldToClear =
-			new Coord(Coord_Container[0].getCoordX(), Coord_Container[0].getCoordY());
+			new Coord(Coord_Container.at(0).getCoordX(), 
+						Coord_Container.at(0).getCoordY());
 
 	Coord_Container.pop_front(); //Removes the first element of the container
-	}
-}
-
-void Snake::checkIfSnakeReachEndOfTheBoard()
-{
-	if (snakeHead->getCoordY() == BOARDSIZE) 
-	{ 
-		snakeHead->setCoordY(0); 
-	} //Yrow = 0;
-	
-	if (snakeHead->getCoordY() == -1) 
-	{ 
-		snakeHead->setCoordY(BOARDSIZE - 1); 
-	} //.Yrow = (BOARDSIZE - 1); }
-	if (snakeHead->getCoordX() == BOARDSIZE)
-	{
-		snakeHead->setCoordX(0); //.Xcolumn = 0;
-	}
-	if (snakeHead->getCoordX() == -1)
-	{
-		snakeHead->setCoordX(BOARDSIZE - 1); // .Xcolumn = BOARDSIZE - 1;
 	}
 }
 
@@ -110,7 +85,8 @@ bool Snake::snakeHitItself()
 {
 	for (auto x : Coord_Container)
 	{
-		if ((snakeHead->getCoordX() == x.getCoordX()) && (snakeHead->getCoordY() == x.getCoordY()))
+		if ((snakeHead->getCoordX() == x.getCoordX()) && 
+			(snakeHead->getCoordY() == x.getCoordY()))
 		{
 			std::cout << "\n\n\t!!! KOLIZJA !!!\n";
 			endGame = true;
@@ -121,37 +97,10 @@ bool Snake::snakeHitItself()
 }
 
 void Snake::putSnakeHeadCoorinatesToDeque(Coord& _snakeHead)
-{/*
-	if (snakeTail != nullptr && 
-		(snakeTail->getCoordX() == snakeHead->getCoordX() 
-			&& (snakeTail->getCoordY() == snakeHead->getCoordY()) )
-		) 
-	{
-		std::cout << "snakeTail == snakeHead";
-		snakeTail->setCoordX(Coord_Container.at(1).getCoordX());
-		snakeTail->setCoordX(Coord_Container.at(1).getCoordY());
-	}*/
-	//Coord coords(snakeHead->getCoordX(), snakeHead->getCoordY());
-	//_snakeHead = coords;
+{
 	Coord_Container.push_back(_snakeHead); //put coordinates of snake head
 }
 
-void Snake::setXcolumn(int _counter)
-{
-	 Xcolumn = _counter;
-}
-int Snake::getXcolumn()
-{
-	return Xcolumn;
-}
-void Snake::setYrow(int _counter)
-{
-	Yrow = _counter;
-}
-int Snake::getYrow()
-{
-	return Yrow;
-}
 char Snake::getDirection()
 {
 	return direction;

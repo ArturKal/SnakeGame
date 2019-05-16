@@ -3,20 +3,21 @@
 #include <iostream>
 
 
-//Constructors
-//Board::Board(SnakeInterface * snakeIntrface, int m_size) : snakeIntrface(snakeIntrface) { vec2D = setSize(m_size); }; //FORM MOCK
+//Constructors:
+Board::Board() 
+{}
 
-Board::Board() {}
-
-Board::Board(int m_size) { vec2D = setSize(m_size); }
+Board::Board(int m_size) 
+{ 
+	vec2D = setSize(m_size); 
+}
 
 Board::Board(ISnake * snakeIntrface, int m_size) : snakeIntrface(snakeIntrface) 
 { 
 	vec2D = setSize(m_size);
 	clear();
 	drawSnakeOnBoardbyIcoord();
-	//drawSnakeOnBoard(snakeIntrface->Xcolumn, snakeIntrface->Yrow); ealier implementation
-}; //FORM MOCK
+}; // FORM MOCKS
 
 Board::Board(ISnake *  snakeIntrface, IApple * appleInterface, int m_size) : snakeIntrface(snakeIntrface) , appleInterface(appleInterface)
 {
@@ -26,10 +27,12 @@ Board::Board(ISnake *  snakeIntrface, IApple * appleInterface, int m_size) : sna
 	drawApplOnBoardbyIcoord();
 }
 
+//Destructor
 Board::~Board()
 {
 }
 
+//Methods:
 std::vector<std::vector<char>> Board::setSize(int _size) {
 
 	try
@@ -49,7 +52,7 @@ std::vector<std::vector<char>> Board::setSize(int _size) {
 
 void Board::drawSnakeOnBoard(int x, int y)
 {
-	vec2D[x][y] = 'o';
+	setvectorCoord(x, y, 'o');
 }
 
 void Board::drawSnakeOnBoardbyIcoord()
@@ -57,32 +60,32 @@ void Board::drawSnakeOnBoardbyIcoord()
 	int x = (snakeIntrface->getSnakeHead())->getCoordX();
 	int y = (snakeIntrface->getSnakeHead())->getCoordY();
 	
-	vec2D[x][y] = 'o';
+	vec2D.at(x).at(y) = 'o';
 }
 
 void Board::drawApplOnBoardbyIcoord()
 {
-	int x = appleInterface->getAppleCoordX(); //AppleCoord->getCoordX();
-	int y = appleInterface->getAppleCoordY(); //AppleCoord->getCoordY();
+	int x = appleInterface->getAppleCoordX();
+	int y = appleInterface->getAppleCoordY();
 
 	if (getvectorCoord(x, y) == 'o') 
-		 //&& snake tail 
 	{
 		appleInterface->putRandomAppleOnboard();
 		drawApplOnBoardbyIcoord();
 	}
-	vec2D[appleInterface->getAppleCoordX()][appleInterface->getAppleCoordY()] = 'x';
+	setvectorCoord(appleInterface->getAppleCoordX(), appleInterface->getAppleCoordY(), 'x');
 }
 
 std::vector<std::vector<char>> Board::clear() {
 	for (int y = 0; y < vec2D.size(); y++)
 	{
-		for (int x = 0; x < vec2D[y].size(); x++)
+		for (int x = 0; x < vec2D.at(y).size(); x++)
 		{
-			vec2D[y][x] = '.';
+			setvectorCoord(x, y, '.');
 		}
 	}
-	return vec2D;//std::vector<std::vector<char>>();
+	return vec2D;
+	//std::vector<std::vector<char>>();
 }
 
 void Board::printVector()
@@ -111,7 +114,6 @@ void Board::SnakeEatsApple()
 	{
 
 		snakeIntrface->setSnakeLength();
-		//std::cout << "ZJADAM!!!!!!!!!!!!!!!";
 		setScore();
 		do {
 			if (checkVectorForFreeSpace())
@@ -129,7 +131,6 @@ void Board::SnakeEatsApple()
 	else
 		eatApple = false;
 	
-	//to by think about
 	if (!eatApple) //don't delete last element in vector
 	{
 		snakeIntrface->setSnakeTail(); //delete last element from container
@@ -165,7 +166,6 @@ bool Board::checkSegmentsV(int cx, int cy)
 		if ( (cx == Xhead.getCoordX() && cy == Xhead.getCoordY())  )
 		{
 			rntyp = true;
-			//std::cout << "SZUKAM " << count << std::endl;	
 		}
 	}
 	return rntyp;
@@ -219,18 +219,4 @@ bool  Board::checkVectorForFreeSpace()
 			break;
 	}
 	return won;
-}
-
-bool Board::snaketailnotEq()
-{
-	
-	if (snakeIntrface->getFieldToClear() != nullptr)
-	{
-		if(snakeIntrface->getFieldToClear()->getCoordX()
-			== snakeIntrface->getSnakeHead()->getCoordX()
-			&& (snakeIntrface->getFieldToClear()->getCoordY()
-				== snakeIntrface->getSnakeHead()->getCoordY()))
-			return true;
-	}
-return false;
 }

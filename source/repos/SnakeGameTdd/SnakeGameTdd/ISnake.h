@@ -3,6 +3,7 @@
 class ISnake
 {
 public:
+	//Constructors
 	ISnake() {};
 	ISnake(int x, int y) {};
 
@@ -10,16 +11,10 @@ public:
 
 	virtual char setDirection(char moveKey) = 0;
 	virtual ICoord * changeSnakeHeadCoordinates(char _direction) = 0;
-	virtual void checkIfSnakeReachEndOfTheBoard() = 0;
 	virtual void setSnakeTail() = 0;
 	virtual bool snakeHitItself() = 0;
 	virtual void putSnakeHeadCoorinatesToDeque(Coord& _snakeHead) = 0;
-
-	virtual void setXcolumn(int _counter) = 0;
-	virtual void setYrow(int _counter) = 0;
-	virtual int getXcolumn() = 0;
-	virtual int getYrow() = 0;
-
+	// getters and setters methods:
 	virtual char getDirection() = 0;
 	virtual ICoord * getSnakeHead() = 0;
 	virtual ICoord * getSnakeTail() = 0;
@@ -33,8 +28,6 @@ public:
 	//std::deque<Segments> Coord_Container; /*Segments class instance*/
 
 protected:
-	int Xcolumn;
-	int Yrow;
 	std::deque<Coord> Coord_Container; /*Segments class instance*/
 
 	char direction = 'r'; //d=down// Variable control of the snake's direction

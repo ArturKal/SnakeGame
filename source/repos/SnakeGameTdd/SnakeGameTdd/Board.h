@@ -12,6 +12,7 @@ public:
 	Board(int m_size);
 	Board(ISnake *  snakeIntrface, int m_size); //for Mock
 	Board(ISnake *  snakeIntrface, IApple * appleInterface,  int m_size); //for Mock
+	//Destructors
 	~Board();
 
 	//Methods:
@@ -34,7 +35,6 @@ public:
 	int getvectorSize();
 	std::vector<std::vector<char>> getVector();
 	bool checkVectorForFreeSpace();
-	bool snaketailnotEq();
 
 	std::vector<std::vector<char>> clear();
 	void printVector();

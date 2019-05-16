@@ -52,8 +52,7 @@ TEST(TestSnake, TestDefaultSnakeConstructorWithTwoIntParameters)
 {
 	int expected = BOARDSIZE / 2;
 	ISnake * Isnake = new Snake(5, 5);
-	ASSERT_EQ(Isnake->getXcolumn(), 5);
-	ASSERT_EQ(Isnake->getYrow(), 5);
+	compareCoordValues(Isnake->getSnakeHead(), 5,5);
 	delete Isnake;
 }
 
@@ -239,17 +238,14 @@ TEST(TestSnake, SnakeReachedTheBoardEndGMOCK)
 {
 	using::testing::Return;
 	using::testing::_;
-	//ICoord * coord = new Coord(15, 1);
 	MockCoord * mCoord = new MockCoord();
 	ISnake * snake = new Snake(mCoord);
 
-	EXPECT_CALL(*mCoord, getCoordX()).Times(3).WillRepeatedly(Return(0));
+	EXPECT_CALL(*mCoord, getCoordX()).Times(1).WillRepeatedly(Return(0));
 	EXPECT_CALL(*mCoord, getCoordY()).WillRepeatedly(Return(5));
 	
-	snake->checkIfSnakeReachEndOfTheBoard(); //call twice time in function
 	compareSnakeHeadCoord(snake, 0, 5);
-	delete mCoord;
-	delete snake;
+	delete mCoord;	delete snake;
 }
 
 TEST(TestSnake, SnakeReachedTheBoardEndTwice)

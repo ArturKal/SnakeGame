@@ -2,7 +2,7 @@
 #include "Coord.h"
 
 
-
+//Constructors:
 Coord::Coord()
 {
 	Xcolumn = BOARDSIZE / 2;
@@ -30,6 +30,8 @@ Coord::Coord(int x, int y)
 		setCoordY(y);
 }
 
+
+//Methods:
 int Coord::getCoordX()
 {
 	return this->Xcolumn;
@@ -43,13 +45,6 @@ int Coord::getCoordY()
 int Coord::setCoordX(int _x)
 {
 	return this->Xcolumn = checkBorders(_x);
-	/*
-	if (_x >= BOARDSIZE)
-		_x = 0;
-	if (_x <= -1)
-		_x = BOARDSIZE-1;
-	return this->Xcolumn = _x;
-	*/
 }
 
 int Coord::setCoordY(int _y)
@@ -74,8 +69,6 @@ int Coord::checkBorders(int fieldcoord)
 		 fieldcoord = BOARDSIZE - 1;
 	return fieldcoord;
 }
-
-
 
 int Coord::compare(int a, int b) 
 {
