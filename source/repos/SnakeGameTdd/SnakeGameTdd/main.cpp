@@ -14,9 +14,8 @@
 
 int main()
 {
-	ICoord * Icoord = new Coord(1,1);
-	ISnake * Isnake = new Snake(new Coord(1,0));
-	IApple * Iapple = new Apple(new Coord(0,0));
+	ISnake * Isnake = new Snake(new Coord());
+	IApple * Iapple = new Apple(new Coord());
 	IBoard * Iboard = new Board(Isnake, Iapple,  BOARDSIZE);
 
 	for (; ; )
@@ -51,8 +50,9 @@ int main()
 		if (Isnake->getFieldToClear() != nullptr)
 			std::cout << "Field To Clear: " << Isnake->getFieldToClear()->printCoordinates() << " \n";
 	}
+
 	//delete instances after
-	delete Icoord;	delete Isnake;	delete Iboard;	delete Iapple;
+	delete Isnake;	delete Iboard;	delete Iapple;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

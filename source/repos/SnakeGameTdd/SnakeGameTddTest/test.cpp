@@ -669,6 +669,8 @@ TEST(TestBoard, SnakeMoveOnBordAndHitItself)
 	ASSERT_FALSE(snake->snakeHitItself());
 	snake->changeSnakeHeadCoordinates(snake->getDirection());
 	ASSERT_TRUE (snake->snakeHitItself());
+	delete  snake;
+
  }
 
 TEST(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
@@ -679,36 +681,68 @@ TEST(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
 	IApple * apple2 = new Apple(1, 2);
 	IBoard * board = new Board(snake, apple, BOARDSIZE);
 
-	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 0)); //snake Tail
-	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 1));
-	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 2));
-	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 3));
+	for (int a = 0; a < 4; a++)
+	{
+		snake->putSnakeHeadCoorinatesToDeque(Coord(0, a)); //snake Tail
+		compareCoordValues(new Coord(snake->getCoord_Container().at(a)), 0, a);
+	}
 	snake->putSnakeHeadCoorinatesToDeque(Coord(1, 3));	//Dodaje nowy element na końcu kontenera » standard C++ ♦ deque. (metoda)
-
-	compareCoordValues(new Coord(snake->getCoord_Container().at(0)), 0, 0);
 	compareCoordValues(new Coord(snake->getCoord_Container().at(4)), 1, 3);
 	/*	#########
 		#O O O O#
 		#O>X>X O# -> snake moves right hit his body
 		#########
 	*/
-	ASSERT_FALSE(snake->snakeHitItself());
-	snake->changeSnakeHeadCoordinates(snake->getDirection());
-	board->SnakeEatsApple();
-	ASSERT_TRUE(board->eatApple);
-	
-	apple->getAppleCoords()->setCoordX(1);
-	apple->getAppleCoords()->setCoordY(2);
-	
-	snake->changeSnakeHeadCoordinates(snake->getDirection());
-	board->SnakeEatsApple();
-	ASSERT_TRUE(board->eatApple);
 
-	ASSERT_FALSE(snake->snakeHitItself());
+	for (int b = 0; b < 2; b++)
+	{
+		ASSERT_FALSE(snake->snakeHitItself());
+		snake->changeSnakeHeadCoordinates(snake->getDirection());
+		board->SnakeEatsApple();
+		if (board->eatApple) //change apple coord to next field
+		{
+			apple->getAppleCoords()->setCoordX(1);
+			apple->getAppleCoords()->setCoordY(2);
+		}
+		ASSERT_TRUE(board->eatApple);
+		ASSERT_FALSE(snake->snakeHitItself());
+	}
 	snake->changeSnakeHeadCoordinates(snake->getDirection());
 	ASSERT_TRUE(snake->snakeHitItself());
+	delete board, apple, snake, apple2;
+
 }
 
+TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
+{
+	int size = BOARDSIZE / 2; //7
+	int numberOfeatedApples = 0;
+	ISnake * snake = new Snake(new Coord(BOARDSIZE/2, size- size));
+	IApple * apple = new Apple(new Coord());
+	IBoard * board = new Board(snake, apple, BOARDSIZE);
+
+	int counter = 0;
+	int numberOfEatApple = 0;
+
+	for (int x = 0; x < (BOARDSIZE + 1)*(BOARDSIZE + 1); x++)
+	{
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //add head to cont and chceck borders
+		if (counter == BOARDSIZE + 1) {
+			snake->setDirection('s');
+			counter = 0;
+		}
+		else
+			snake->setDirection('d');
+		board->drawSnakeOnBoardbyIcoord();
+		board->SnakeEatsApple(); //put random apple on '.' field	
+		if (board->eatApple) numberOfEatApple++;
+		board->drawApplOnBoardbyIcoord();
+		counter++;
+	}
+	EXPECT_EQ( 2, snake->getSnakeLength()- numberOfEatApple);
+	compareCoordValues(snake->getSnakeHead() , size, 1); //snake starts and end in the same point
+	delete board, snake, apple;
+}
 //=============================================================================================
 //Helping Methods:
 void compareSnakeHeadCoord(ISnake *  snake, int x, int y)
