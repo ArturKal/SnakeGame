@@ -17,7 +17,6 @@ public:
 	MOCK_METHOD1(setCoordY, int(int x));
 	MOCK_METHOD0(printCoordinates , std::string(void));
 	MOCK_METHOD1(checkBorders , int(int a));
-
 };
 
 class MockSnake : public ISnake

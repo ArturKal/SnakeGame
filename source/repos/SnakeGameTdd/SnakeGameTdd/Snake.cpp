@@ -98,7 +98,7 @@ bool Snake::snakeHitItself()
 
 void Snake::putSnakeHeadCoorinatesToDeque(Coord& _snakeHead)
 {
-	Coord_Container.push_back(_snakeHead); //put coordinates of snake head
+	Coord_Container.push_back(_snakeHead); //put coordinates of snake head at the end
 }
 
 char Snake::getDirection()

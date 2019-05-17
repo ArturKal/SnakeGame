@@ -23,8 +23,10 @@ Coord::Coord(int x, int y)
 	catch (std::runtime_error & e)
 	{
 		std::cout << "Runtime error: " << e.what();
-			if (x < 0 || x > BOARDSIZE) x = 0;
-			if (y < 0 || y > BOARDSIZE) y = 0;	
+			if (x > BOARDSIZE) x = 0;
+			if (y > BOARDSIZE) y = 0;
+			if (x < 0 ) x = BOARDSIZE-1;
+			if (y < 0 ) y = BOARDSIZE-1;
 	}
 		setCoordX(x);
 		setCoordY(y);
@@ -76,7 +78,7 @@ int Coord::compare(int a, int b)
 		throw std::runtime_error("Coord parameter cannot be minus value, changed wrong value to 0\n");
 	}
 	if (a > BOARDSIZE || b > BOARDSIZE) {
-		throw std::runtime_error("Coord parameter cannot be bigger then Boardsize value, changed wrong value to 0\n");
+		throw std::runtime_error("Coord parameter cannot be bigger then Boardsize value, changed wrong value to BordSize value\n");
 	}
 	return a;
 }
