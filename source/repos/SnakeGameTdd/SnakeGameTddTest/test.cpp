@@ -141,15 +141,25 @@ TEST_F(TestSnake, setMovementDirectionToDownWhenPreesedKeyIsUpAndMovementDirecti
 	ASSERT_EQ(snake->getDirection(), 'd');
 }
 
-	TEST_F(TestSnake, ExpectToThrowOutOfRangeException)
+TEST_F(TestSnake, ExpectToThrowOutOfRangeException)
+{
+	coord = new Coord(2, 3);
+	snake = new Snake(coord);
+
+	EXPECT_THROW(snake->getCoord_Container().at(0), std::out_of_range);
+    	snake->putSnakeHeadCoorinatesToDeque(Coord(coord));
+	ASSERT_EQ(snake->getCoord_Container().size(), 1);
+	EXPECT_THROW(snake->getCoord_Container().at(1), std::out_of_range);
+}
+
+	TEST_F(TestSnake, snkakeContainerTests)
 	{
 		coord = new Coord(2, 3);
 		snake = new Snake(coord);
-	
-		EXPECT_THROW(snake->getCoord_Container().at(0), std::out_of_range);
-			snake->putSnakeHeadCoorinatesToDeque(Coord(coord));
-		ASSERT_EQ(snake->getCoord_Container().size(), 1);
-		EXPECT_THROW(snake->getCoord_Container().at(1), std::out_of_range);
+
+		EXPECT_THAT(snake->getCoord_Container(), ::testing::IsEmpty());
+			snake->putSnakeHeadCoorinatesToDeque(Coord (coord->getCoordX(), coord->getCoordY()));			
+		EXPECT_THAT(snake->getCoord_Container(), ::testing::SizeIs(1));
 	}
 
 TEST_F(TestSnake, putHeadSnakeCoordinatesToDequeContainer)
