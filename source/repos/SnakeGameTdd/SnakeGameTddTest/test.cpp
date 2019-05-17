@@ -347,44 +347,47 @@ TEST(TestSnake, SnakeMovesDownUntilHeFindsHimselfInTheSamePositionAndThenMovesLe
 //========================================================================================================
 //===========================================COORD TEST===================================================
 
-TEST(TestCoord, CreateCoordInstanceAndGetCoordinates)
-{
-	int expected = BOARDSIZE / 2;
-	ICoord * Icoord = new Coord();
-	EXPECT_EQ(Icoord->getCoordX() , expected);
-	ASSERT_EQ(Icoord->getCoordY() , expected);
-	delete Icoord;
-}
-
-TEST(TestCoord, CreateCoordInstanceAndSetCoordinates)
-{
-	int Xcoord = 4;
-	int Ycoord = 6;
-	ICoord * Icoord = new Coord();
+	class TestCoord : public ::testing::Test {
+	protected:
+			ICoord * Icoord;
+			int expected = BOARDSIZE / 2;
 	
-	Icoord->setCoordX(Xcoord);
-	Icoord->setCoordY(Ycoord);
-	ASSERT_EQ(Icoord->getCoordX() , 4);
-	ASSERT_EQ(Icoord->getCoordY() , 6);
-	delete Icoord;
+		void SetUp() override 
+		{
+			Icoord = new Coord();
+		}
 
+		void TearDown() override 
+		{
+			delete Icoord;
+		}
+	};
+
+TEST_F(TestCoord, CreateCoordInstanceAndGetCoordinates)	
+{
+	EXPECT_EQ(Icoord->getCoordX() , expected);	
+	ASSERT_EQ(Icoord->getCoordY() , expected);
 }
 
-TEST(TestCoord, CreateCoordInstanceSetCoordinatesAndPrintThemInConsole)
+TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinates)
 {
-	ICoord * Icoord = new Coord(5,5);
-	ASSERT_EQ(Icoord->getCoordX(), 5);
-	ASSERT_EQ(Icoord->getCoordY(), 5);
+	int Xcoord = 4;				int Ycoord = 6;	
+	Icoord->setCoordX(Xcoord); 	Icoord->setCoordY(Ycoord);
+	compareCoordValues(Icoord, 4, 6);
+}
 
+TEST_F(TestCoord, CreateCoordInstanceSetCoordinatesAndPrintThemInConsole)
+{
+	Icoord = new Coord(5,5);
+
+	compareCoordValues(Icoord, 5, 5);
 	std::string concatate = "Coord Xcolumn : 5 Coord Ycolumn : 5\n";
 	EXPECT_EQ(Icoord->printCoordinates() , concatate);
-	delete Icoord;
 }
 
-TEST(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchExceptionThrowMassege)
+TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchExceptionThrowMassege)
 {
 	int Xcoord = -10;	int Ycoord = -10;
-	ICoord * Icoord;
 	try
 	{
 		Icoord = new Coord(Xcoord, Ycoord);
@@ -394,29 +397,19 @@ TEST(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchException
 		// check exception
 		ASSERT_STREQ("Coord parameter cannot be minus value\n", err.what());
 	}
-	delete Icoord;
-
 }
-TEST(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchExceptionSetMinusToZero)
+TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchExceptionSetMinusToZero)
 {
 	int Xcoord = -4;	int Ycoord = -6;
-	ICoord * Icoord = new Coord(Xcoord, Ycoord);
+	Icoord = new Coord(Xcoord, Ycoord);
 	compareCoordValues(Icoord, 0, 0);
-	ASSERT_EQ(Icoord->getCoordX(), 0);
-	ASSERT_EQ(Icoord->getCoordY(), 0);
-	delete Icoord;
-
 }
 
-TEST(TestCoord, CreateCoordInstanceAndSetCoordinatesWithValuBiggerThanBoardsizeAndChangItToZero)
+TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinatesWithValuBiggerThanBoardsizeAndChangItToZero)
 {
 	int Xcoord = BOARDSIZE+1;	int Ycoord = BOARDSIZE+2;
-	ICoord * Icoord = new Coord(Xcoord, Ycoord);
+	Icoord = new Coord(Xcoord, Ycoord);
 	compareCoordValues(Icoord, 0, 0);
-	ASSERT_EQ(Icoord->getCoordX(), 0);
-	ASSERT_EQ(Icoord->getCoordY(), 0);
-	delete Icoord;
-
 }
 //-------------------------------------------------------------------------------------------------------
 
