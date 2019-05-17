@@ -154,12 +154,18 @@ TEST_F(TestSnake, ExpectToThrowOutOfRangeException)
 
 	TEST_F(TestSnake, snkakeContainerTests)
 	{
+		using::testing::ElementsAreArray;
 		coord = new Coord(2, 3);
 		snake = new Snake(coord);
+		MockSnake * Msnake = new MockSnake();
+
+		std::deque<Coord> Coord_Container2 = { coord };
+		EXPECT_CALL(*Msnake, getCoord_Container()).WillOnce(::testing::Return(Coord_Container2));
 
 		EXPECT_THAT(snake->getCoord_Container(), ::testing::IsEmpty());
 			snake->putSnakeHeadCoorinatesToDeque(Coord (coord->getCoordX(), coord->getCoordY()));			
 		EXPECT_THAT(snake->getCoord_Container(), ::testing::SizeIs(1));
+		//EXPECT_THAT(snake->getCoord_Container(), ::testing::UnorderedElementsAre(::testing::Pointee( coord)));
 	}
 
 TEST_F(TestSnake, putHeadSnakeCoordinatesToDequeContainer)
