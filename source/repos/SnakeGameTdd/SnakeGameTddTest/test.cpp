@@ -78,67 +78,67 @@ TEST_F(TestSnake, setSnakeMovementDirectionBasedOnThePressedKey)
 	char pressedKey_D = 'd';	//press d to set the direction right
 	char pressedKey_A = 'a';	//press a to set the direction left
 
-	ASSERT_EQ(snake->getDirection(), 'r');  //snake by default always starts going right
+	EXPECT_EQ(snake->getDirection(), 'r');  //snake by default always starts going right
 
-	ASSERT_EQ(snake->setDirection(pressedKey_D), 'r');
-	ASSERT_EQ(snake->getDirection(), 'r');
+	EXPECT_EQ(snake->setDirection(pressedKey_D), 'r');
+	EXPECT_EQ(snake->getDirection(), 'r');
 
-	ASSERT_EQ(snake->setDirection(pressedKey_S), 'd');
-	ASSERT_EQ(snake->getDirection(), 'd');
+	EXPECT_EQ(snake->setDirection(pressedKey_S), 'd');
+	EXPECT_EQ(snake->getDirection(), 'd');
 
-	ASSERT_EQ(snake->setDirection(pressedKey_A), 'l');
-	ASSERT_EQ(snake->getDirection(), 'l');
+	EXPECT_EQ(snake->setDirection(pressedKey_A), 'l');
+	EXPECT_EQ(snake->getDirection(), 'l');
 
-	ASSERT_EQ(snake->setDirection(pressedKey_W), 'u');
-	ASSERT_EQ(snake->getDirection(), 'u');
+	EXPECT_EQ(snake->setDirection(pressedKey_W), 'u');
+	EXPECT_EQ(snake->getDirection(), 'u');
 }
 
 TEST_F(TestSnake, setMovementDirectionToRightWhenPreesedKeyIsLeftAndMovementDirectionIsRight)
 {
 	snake = new Snake(coord);
-	ASSERT_EQ(snake->getDirection(), 'r');
+	EXPECT_EQ(snake->getDirection(), 'r');
 	char leftKey = 'a';
-	ASSERT_EQ(snake->setDirection(leftKey), 'r');
-	ASSERT_EQ(snake->getDirection(), 'r');
-	ASSERT_NE(snake->getDirection(), 'l');
+	EXPECT_EQ(snake->setDirection(leftKey), 'r');
+	EXPECT_EQ(snake->getDirection(), 'r');
+	EXPECT_NE(snake->getDirection(), 'l');
 }
 TEST_F(TestSnake, setMovementDirectionToLeftWhenPreesedKeyIsRightAndMovementDirectionIsLeft)
 {
 	snake = new Snake(coord);
 	char leftKey = 'a';
-	ASSERT_EQ(snake->setDirection('w'), 'u'); //first set direction to up
-	ASSERT_EQ(snake->setDirection(leftKey), 'l'); //then set direction to left
-	ASSERT_EQ(snake->setDirection('r'), 'l');
-	ASSERT_NE(snake->getDirection(), 'r');
-	ASSERT_EQ(snake->getDirection(), 'l');
+	EXPECT_EQ(snake->setDirection('w'), 'u'); //first set direction to up
+	EXPECT_EQ(snake->setDirection(leftKey), 'l'); //then set direction to left
+	EXPECT_EQ(snake->setDirection('r'), 'l');
+	EXPECT_NE(snake->getDirection(), 'r');
+	EXPECT_EQ(snake->getDirection(), 'l');
 }
 TEST_F(TestSnake, setMovementDirectionToDefaultWhenOtherKeyWaspressedthenASDW)
 {
 	snake = new Snake(coord);
 	char leftKey = 'a';
-	ASSERT_EQ(snake->setDirection('q'), 'r'); 
-	ASSERT_EQ(snake->setDirection('t'), 'r');
-	ASSERT_EQ(snake->setDirection('='), 'r');
-	ASSERT_EQ(snake->getDirection(), 'r');
+	EXPECT_EQ(snake->setDirection('q'), 'r'); 
+	EXPECT_EQ(snake->setDirection('t'), 'r');
+	EXPECT_EQ(snake->setDirection('='), 'r');
+	EXPECT_EQ(snake->getDirection(), 'r');
 }
 
 TEST_F(TestSnake, setMovementDirectionToUpWhenPreesedKeyIsDownAndMovementDirectionIsUp)
 {
 	snake = new Snake(coord);
 	char upKey = 'w';
-	ASSERT_EQ(snake->setDirection(upKey), 'u');
-	ASSERT_EQ(snake->setDirection('s'), 'u');
-	ASSERT_EQ(snake->getDirection(), 'u');
+	EXPECT_EQ(snake->setDirection(upKey), 'u');
+	EXPECT_EQ(snake->setDirection('s'), 'u');
+	EXPECT_EQ(snake->getDirection(), 'u');
 }
 TEST_F(TestSnake, setMovementDirectionToDownWhenPreesedKeyIsUpAndMovementDirectionIsDown)
 {
 	snake = new Snake(coord);
-	ASSERT_EQ(snake->setDirection('s'), 'd');
+	EXPECT_EQ(snake->setDirection('s'), 'd');
 
 	char downKey = 's';
-	ASSERT_EQ(snake->setDirection(downKey), 'd');
-	ASSERT_EQ(snake->setDirection('u'), 'd');
-	ASSERT_EQ(snake->getDirection(), 'd');
+	EXPECT_EQ(snake->setDirection(downKey), 'd');
+	EXPECT_EQ(snake->setDirection('u'), 'd');
+	EXPECT_EQ(snake->getDirection(), 'd');
 }
 
 TEST_F(TestSnake, ExpectToThrowOutOfRangeException)
@@ -148,7 +148,7 @@ TEST_F(TestSnake, ExpectToThrowOutOfRangeException)
 
 	EXPECT_THROW(snake->getCoord_Container().at(0), std::out_of_range);
     	snake->putSnakeHeadCoorinatesToDeque(Coord(coord));
-	ASSERT_EQ(snake->getCoord_Container().size(), 1);
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
 	EXPECT_THROW(snake->getCoord_Container().at(1), std::out_of_range);
 }
 
@@ -175,9 +175,9 @@ TEST_F(TestSnake, putHeadSnakeCoordinatesToDequeContainer)
 	Coord x(coord->getCoordX() , coord->getCoordY());
 	snake->putSnakeHeadCoorinatesToDeque(x);
 	
-	ASSERT_EQ(snake->getCoord_Container().size(), 1);
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
 		compareCoordValues(new Coord (snake->getCoord_Container().at(0)), 2,3);
-	ASSERT_EQ(snake->getSnakeHead(), coord); //Compare addresses
+	EXPECT_EQ(snake->getSnakeHead(), coord); //Compare addresses
 }
 
 TEST_F(TestSnake, putHeadSnakeCoordinatesToDequeContainerMockingSnakeHeadCoord)
@@ -192,9 +192,9 @@ TEST_F(TestSnake, putHeadSnakeCoordinatesToDequeContainerMockingSnakeHeadCoord)
 	snake->putSnakeHeadCoorinatesToDeque( 
 		Coord(snake->getSnakeHead()->getCoordX() , snake->getSnakeHead()->getCoordY()));
 	
-	ASSERT_GE(snake->getCoord_Container().size(), 0);
-	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordX(), (expected+2));
-	ASSERT_EQ(snake->getCoord_Container().at(0).getCoordY(), (expected));
+	EXPECT_GE(snake->getCoord_Container().size(), 0);
+	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordX(), (expected+2));
+	EXPECT_EQ(snake->getCoord_Container().at(0).getCoordY(), (expected));
 	delete mCoord;
 }
 
@@ -214,7 +214,7 @@ TEST_F(TestSnake, MoveSnakeToRightOnBoardAndPutSnakeHeadCoordinatesToDeque)
 	
 	compareSnakeHeadCoord(snake, expected, expected + 1);	
 	compareCoordValues(new Coord(snake->getCoord_Container().at(0)), expected, expected);
-	ASSERT_EQ(snake->getCoord_Container().size(), 1);
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
 	EXPECT_THROW(snake->getCoord_Container().at(1) ,std::out_of_range ); //throw out_of_range exception
 }
 
@@ -430,7 +430,7 @@ TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchExcepti
 	catch (const std::runtime_error& err)
 	{
 		// check exception
-		ASSERT_STREQ("Coord parameter cannot be minus value\n", err.what());
+		EXPECT_STREQ("Coord parameter cannot be minus value\n", err.what());
 	}
 }
 TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinatesWithMinusValueCatchExceptionSetMinusToBoardSize)
@@ -492,82 +492,107 @@ TEST_F(TestCoord, MockingSnakeMovesToUpAndDownWhenSnakeCroosBoardSize)
 class TestBoard : public ::testing::Test {
 protected:
 	IBoard * Iboard;
+	ISnake * snake;
+	IApple * apple;
 	int expected = BOARDSIZE / 2;
 
 	void SetUp() override
 	{
 		Iboard = new Board();
+		snake = new Snake();
+		apple = new Apple();
 	}
 
 	void TearDown() override
 	{
-		delete Iboard;
+		delete Iboard, snake, apple;
 	}
 };
 
-
 TEST_F(TestBoard, TestBoardCreateAndSetvectorSizeAndFillItFields) {
 	IBoard * Iboard = new Board(10);
-	ASSERT_THAT(Iboard->getvectorSize(), 10);
+	EXPECT_THAT(Iboard->getvectorSize(), 10);
 
 	Iboard->clear();
 	for (auto line : Iboard->getVector())
 		for (auto segment : line)
 		{
-			ASSERT_THAT(segment, '.');
+			EXPECT_THAT(segment, '.');
 		}
 	delete Iboard;
 }
 
 TEST_F(TestBoard, CreateAndSetvectorSizetoZeroAndMinusCatchLogicErrorAndChangValueToDefault)
 {
-	IBoard * Iboard = new Board(-1);
-	ASSERT_THAT(Iboard->getvectorSize(), BOARDSIZE);
-	delete Iboard;
-	IBoard * Iboard2 = new Board(0);
-	ASSERT_THAT(Iboard2->getvectorSize(), BOARDSIZE);
-	delete Iboard2;
+	Iboard = new Board(-1);
+	EXPECT_THAT(Iboard->getvectorSize(), BOARDSIZE);
+	Iboard = new Board(0);
+	EXPECT_THAT(Iboard->getvectorSize(), BOARDSIZE);
 }
-	TEST_F(TestBoard, TestBoardFillItFields)
-	{
-		IBoard * Iboard = new Board(3);
-		Iboard->clear();
-	
-		std::vector <std::vector<char> > 
-			expected = { {'.','.','.'} ,{'.','.','.'}, {'.','.','.'} }; // "{...}{...}{...}";
-		std::vector <std::vector<char> > 
-			expectedFail = { {'.','.','x'} ,{'.','.','.'}, {'.','.','.'} }; // "{..x}{...}{...}";
 
-		ASSERT_EQ(Iboard->clear(), expected);
-		ASSERT_NE(Iboard->clear(), expectedFail);
-		delete Iboard;
-	}
+TEST_F(TestBoard, SetvectorCoordWithCharSymbol)
+{
+	snake = new Snake(1, 1);
+	apple = new Apple(2, 2);
+	Iboard = new Board(BOARDSIZE);
+
+	Iboard->setvectorCoord(0, 1, '.');
+	Iboard->setvectorCoord(snake->getSnakeHead()->getCoordX(),snake->getSnakeHead()->getCoordY(), 'o');
+	Iboard->setvectorCoord(apple->getAppleCoords()->getCoordX(),apple->getAppleCoords()->getCoordY(), 'x');
+
+	EXPECT_EQ(Iboard->getvectorCoord(0, 1), '.');
+	EXPECT_EQ(Iboard->getvectorCoord(1, 1), 'o');
+	EXPECT_EQ(Iboard->getvectorCoord(2, 2), 'x');
+}
+
+TEST_F(TestBoard, TestBoardFillItFields)
+{
+	Iboard = new Board(3);
+	Iboard->clear();
+
+	std::vector <std::vector<char> >
+		expected = { {'.','.','.'} ,{'.','.','.'}, {'.','.','.'} }; // "{...}{...}{...}";
+	std::vector <std::vector<char> >
+		expectedFail = { {'.','.','x'} ,{'.','.','.'}, {'.','.','.'} }; // "{..x}{...}{...}";
+
+	EXPECT_EQ(Iboard->clear(), expected);
+	EXPECT_NE(Iboard->clear(), expectedFail);
+}
 
 TEST_F(TestBoard, TestBoardScore)
 {
-	IBoard * Iboard = new Board(3);
-	ASSERT_EQ(Iboard->getScore(), 0);
+	Iboard = new Board(3);
+	EXPECT_EQ(Iboard->getScore(), 0);
 	Iboard->setScore(); Iboard->setScore();
-	ASSERT_EQ(Iboard->setScore(), 2);
-	delete Iboard;
+	EXPECT_EQ(Iboard->setScore(), 2);
 }
+
+TEST_F(TestBoard, DrawSnakeCoordOnBoard)
+{
+	snake = new Snake(1,1);
+	Iboard = new Board(snake, BOARDSIZE);
+
+	Iboard->clear(); //set every field on Board to '.'
+	Iboard->drawSnakeOnBoardbyIcoord();
+
+	EXPECT_EQ(Iboard->getvectorCoord(1, 1), 'o');
+}
+
 TEST_F(TestBoard, TestDrawSnakeOnBoard)
 {
-	int expected = BOARDSIZE / 2;
-	IBoard * Iboard = new Board(BOARDSIZE);
-	ISnake * Isnake = new Snake();
+	Iboard = new Board(BOARDSIZE);
+	snake = new Snake();
 	Iboard->clear();
 	std::vector <std::vector<char> > expectedEmpty = Iboard->getVector();
 
-	Iboard->drawSnakeOnBoard(Isnake->getSnakeHead()->getCoordX(), Isnake->getSnakeHead()->getCoordY());
+	EXPECT_THAT(snake->getCoord_Container(), ::testing::IsEmpty());
+
+	Iboard->drawSnakeOnBoard(snake->getSnakeHead()->getCoordX(), snake->getSnakeHead()->getCoordY());
 	std::vector <std::vector<char> > expectedSnake = Iboard->getVector();
 
-	ASSERT_NE(expectedEmpty, expectedSnake);
-	ASSERT_EQ(Isnake->getSnakeHead()->getCoordX(), expected);
-	ASSERT_EQ(Isnake->getSnakeHead()->getCoordY(), expected);
-	ASSERT_EQ(Iboard->getvectorCoord(expected , expected), 'o');
-	delete Iboard;
-	delete Isnake;
+	compareCoordValues(snake->getSnakeHead(), expected, expected);
+	EXPECT_NE(expectedEmpty, expectedSnake);
+	EXPECT_EQ(Iboard->getvectorCoord(expected , expected), 'o');
 }
 
 TEST(TestMockSnake, createMockSnakeAndPutCoordinatesOfSnakeHeadOnTheBoard)
@@ -579,9 +604,9 @@ TEST(TestMockSnake, createMockSnakeAndPutCoordinatesOfSnakeHeadOnTheBoard)
 	EXPECT_CALL(*mSnake, getSnakeHead()).WillRepeatedly(Return(coord));
 	IBoard * board = new Board(mSnake , BOARDSIZE);
 
-	ASSERT_EQ(board->getvectorSize() , BOARDSIZE);
+	EXPECT_EQ(board->getvectorSize() , BOARDSIZE);
 	compareSnakeHeadCoord(mSnake, (BOARDSIZE - 2), (BOARDSIZE - 2));
-	ASSERT_EQ(board->getvectorCoord((mSnake->getSnakeHead())->getCoordX() , 
+	EXPECT_EQ(board->getvectorCoord((mSnake->getSnakeHead())->getCoordX() , 
 									(mSnake->getSnakeHead())->getCoordY()), 
 									'o');
 	delete board;	delete coord;	delete mSnake;
@@ -715,8 +740,7 @@ TEST_F(TestBoard, SnakeMoveOnBordTwoFieldEeatsAnAppleAndGrows)
 
 TEST_F(TestBoard, SnakeMoveOnBordAndHitItself)
 {
-	int size = BOARDSIZE / 2; //7
-	ISnake * snake = new Snake(new Coord(1,0));
+	snake = new Snake(new Coord(1,0));
 	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 0));	//Dodaje nowy element na końcu kontenera » standard C++ ♦ deque. (metoda)
 	snake->putSnakeHeadCoorinatesToDeque(Coord(0, 1));
 	snake->putSnakeHeadCoorinatesToDeque(Coord(1, 1));
@@ -729,20 +753,17 @@ TEST_F(TestBoard, SnakeMoveOnBordAndHitItself)
 		#O>O# -> snake moves right hit his body
 		#####
 	*/
-	ASSERT_FALSE(snake->snakeHitItself());
+	EXPECT_FALSE(snake->snakeHitItself());
 	snake->changeSnakeHeadCoordinates(snake->getDirection());
-	ASSERT_TRUE (snake->snakeHitItself());
-	delete  snake;
-
+	EXPECT_TRUE (snake->snakeHitItself());
  }
 
 TEST_F(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
 {
-	int size = BOARDSIZE / 2; //7
-	ISnake * snake = new Snake(new Coord(1, 0));
+	snake = new Snake(new Coord(1, 0));
 	IApple * apple = new Apple(1, 1);
 	IApple * apple2 = new Apple(1, 2);
-	IBoard * board = new Board(snake, apple, BOARDSIZE);
+	Iboard = new Board(snake, apple, BOARDSIZE);
 
 	for (int a = 0; a < 4; a++)
 	{
@@ -759,30 +780,28 @@ TEST_F(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
 
 	for (int b = 0; b < 2; b++)
 	{
-		ASSERT_FALSE(snake->snakeHitItself());
+		EXPECT_FALSE(snake->snakeHitItself());
 		snake->changeSnakeHeadCoordinates(snake->getDirection());
-		board->SnakeEatsApple();
-		if (board->eatApple) //change apple coord to next field
+		Iboard->SnakeEatsApple();
+		if (Iboard->eatApple) //change apple coord to next field
 		{
 			apple->getAppleCoords()->setCoordX(1);
 			apple->getAppleCoords()->setCoordY(2);
 		}
-		ASSERT_TRUE(board->eatApple);
-		ASSERT_FALSE(snake->snakeHitItself());
+		EXPECT_TRUE(Iboard->eatApple);
+		EXPECT_FALSE(snake->snakeHitItself());
 	}
 	snake->changeSnakeHeadCoordinates(snake->getDirection());
-	ASSERT_TRUE(snake->snakeHitItself());
-	delete board, apple, snake, apple2;
-
+	EXPECT_TRUE(snake->snakeHitItself());
+	delete apple, apple2;
 }
 
 TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 {
-	int size = BOARDSIZE / 2; //7
 	int numberOfeatedApples = 0;
-	ISnake * snake = new Snake(new Coord(BOARDSIZE/2, size- size));
+	snake = new Snake(new Coord(BOARDSIZE/2, 0));
 	IApple * apple = new Apple(new Coord());
-	IBoard * board = new Board(snake, apple, BOARDSIZE);
+	Iboard = new Board(snake, apple, BOARDSIZE);
 
 	int counter = 0;
 	int numberOfEatApple = 0;
@@ -796,24 +815,23 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 		}
 		else
 			snake->setDirection('d');
-		board->drawSnakeOnBoardbyIcoord();
-		board->SnakeEatsApple(); //put random apple on '.' field	
-		if (board->eatApple) numberOfEatApple++;
-		board->drawApplOnBoardbyIcoord();
+		Iboard->drawSnakeOnBoardbyIcoord();
+		Iboard->SnakeEatsApple(); //put random apple on '.' field	
+		if (Iboard->eatApple) numberOfEatApple++;
+		Iboard->drawApplOnBoardbyIcoord();
 		counter++;
 	}
 	EXPECT_EQ( 2, snake->getSnakeLength()- numberOfEatApple);
-	compareCoordValues(snake->getSnakeHead() , size, 1); //snake starts and end in the same point
-	delete board, snake, apple;
+	compareCoordValues(snake->getSnakeHead() , expected, 1); //snake starts and end in the same point
+	delete apple;
 }
 
 TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20)
 {
-	int size = BOARDSIZE / 2; //7
 	int numberOfeatedApples = 0;
-	ISnake * snake = new Snake(new Coord(BOARDSIZE / 2, size - size));
+	snake = new Snake(new Coord(BOARDSIZE / 2, 0));
 	IApple * apple = new Apple(new Coord());
-	IBoard * board = new Board(snake, apple, BOARDSIZE);
+	Iboard = new Board(snake, apple, BOARDSIZE);
 
 	int counter = 0;
 	int numberOfEatApple = 0;
@@ -827,10 +845,10 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs
 		}
 		else
 			snake->setDirection('d');
-		board->drawSnakeOnBoardbyIcoord();
-		board->SnakeEatsApple(); //put random apple on '.' field	
-		if (board->eatApple) numberOfEatApple++;
-		board->drawApplOnBoardbyIcoord();
+		Iboard->drawSnakeOnBoardbyIcoord();
+		Iboard->SnakeEatsApple(); //put random apple on '.' field	
+		if (Iboard->eatApple) numberOfEatApple++;
+		Iboard->drawApplOnBoardbyIcoord();
 		counter++;
 
 		if (snake->getSnakeLength() == 20)
@@ -840,7 +858,7 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs
 	}
 	
 	EXPECT_EQ(snake->getSnakeLength(), 20);
-	delete board, snake, apple;
+	delete apple;
 }
 
 TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIsNoSpaceAngGameEnds)
@@ -946,7 +964,7 @@ TEST_F(TestApple, PutAndPrintAppleAndSnakeOnBoardDuringCreation)
 	IBoard * board = new Board(snake, apple, BOARDSIZE);
 
 	compareCoordValues(snake->getSnakeHead(), BOARDSIZE/2 , BOARDSIZE/2);
-	ASSERT_TRUE(compareCoordsAreNotEq(snake->getSnakeHead(), apple->getAppleCoords()));
+	EXPECT_TRUE(compareCoordsAreNotEq(snake->getSnakeHead(), apple->getAppleCoords()));
 
 	delete apple, snake, board;
 }
@@ -955,11 +973,11 @@ TEST_F(TestApple, PutAndPrintAppleOnBoardOnTheSameLocationAsSnakeHasDuringCreati
 {
 	IApple * apple = new Apple(5 , 7);
 	ISnake * snake = new Snake(5 , 7);
-	ASSERT_FALSE(compareCoordsAreNotEq(snake->getSnakeHead(), apple->getAppleCoords()));
+	EXPECT_FALSE(compareCoordsAreNotEq(snake->getSnakeHead(), apple->getAppleCoords())) <<"ARTUR"<< snake->getSnakeHead()->printCoordinates();
 	IBoard * board = new Board(snake, apple , BOARDSIZE);
 
 	compareCoordValues(snake->getSnakeHead(), 5, 7);
-	ASSERT_TRUE(compareCoordsAreNotEq(snake->getSnakeHead() , apple->getAppleCoords()) );
+	EXPECT_TRUE(compareCoordsAreNotEq(snake->getSnakeHead() , apple->getAppleCoords()) );
 
 	delete apple, snake, board;
 }
@@ -982,10 +1000,10 @@ TEST_F(TestApple, PutAndPrintAppleOnBoardwhenOnlyOneFieldIsEmptyRestIsSnakeBody)
 		}
 	}
 
-	ASSERT_EQ(board->getvectorCoord(0,0) , '.');
+	EXPECT_EQ(board->getvectorCoord(0,0) , '.');
 
 	board->drawApplOnBoardbyIcoord(); //drow random apple on empty field
-	ASSERT_EQ(board->getvectorCoord(0, 0), 'x');
+	EXPECT_EQ(board->getvectorCoord(0, 0), 'x');
 
 	delete apple, snake, board;
 }
