@@ -218,15 +218,15 @@ TEST_F(TestSnake, MoveSnakeToRightOnBoardAndPutSnakeHeadCoordinatesToDeque)
 	EXPECT_THROW(snake->getCoord_Container().at(1) ,std::out_of_range ); //throw out_of_range exception
 }
 
-TEST_F(TestSnake, SnakeMovesRigtOneFildAndThenPlayerPresUpKeySnakeMovesUpOneField)
-{
-	snake = new Snake(coord);
-	char pressedKey = 'w';
-	snake->changeSnakeHeadCoordinates(snake->getDirection()); //right
-	snake->setDirection(pressedKey); //key w is up
-	snake->changeSnakeHeadCoordinates(snake->getDirection()); //up
-	compareSnakeHeadCoord(snake, expected - 1, expected + 1);
-}
+	TEST_F(TestSnake, SnakeMovesRigtOneFildAndThenPlayerPresUpKeySnakeMovesUpOneField)
+	{
+		snake = new Snake(coord);
+		char pressedKey = 'w';
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //right
+		snake->setDirection(pressedKey); //key w is up
+		snake->changeSnakeHeadCoordinates(snake->getDirection()); //up
+		compareSnakeHeadCoord(snake, expected - 1, expected + 1);
+	}
 
 TEST_F(TestSnake, SnakeReachedTheBoardEndGMOCK)
 {
@@ -288,6 +288,20 @@ TEST_F(TestSnake, SnakeReachedTheBoardEndTwice)
 		compareCoordValues(snake->getSnakeTail(), 3, 2);
 	}
 
+
+	TEST_F(TestSnake, SetSnakeTailUsingDefaultActionMock2)
+	{
+		using::testing::Return;
+		MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+		snake = new Snake(mCoord);
+
+		ON_CALL(*mCoord, getCoordX()).WillByDefault(Return(3));
+		ON_CALL(*mCoord, getCoordY()).WillByDefault(Return(2));
+
+		snake->setSnakeTail();
+		compareCoordValues(snake->getSnakeHead(), 3, 2);
+		compareCoordValues(snake->getSnakeTail(), 3, 2);
+	}
 TEST_F(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 {
 	coord = new Coord(5, 5); //snake tail [5,5]
@@ -475,7 +489,24 @@ TEST_F(TestCoord, MockingSnakeMovesToUpAndDownWhenSnakeCroosBoardSize)
 //========================================================================================================
 //===========================================BOARD TEST===================================================
 
-TEST(TestBoard, TestBoardCreateAndSetvectorSizeAndFillItFields) {
+class TestBoard : public ::testing::Test {
+protected:
+	IBoard * Iboard;
+	int expected = BOARDSIZE / 2;
+
+	void SetUp() override
+	{
+		Iboard = new Board();
+	}
+
+	void TearDown() override
+	{
+		delete Iboard;
+	}
+};
+
+
+TEST_F(TestBoard, TestBoardCreateAndSetvectorSizeAndFillItFields) {
 	IBoard * Iboard = new Board(10);
 	ASSERT_THAT(Iboard->getvectorSize(), 10);
 
@@ -488,7 +519,7 @@ TEST(TestBoard, TestBoardCreateAndSetvectorSizeAndFillItFields) {
 	delete Iboard;
 }
 
-TEST(TestBoard, CreateAndSetvectorSizetoZeroAndMinusCatchLogicErrorAndChangValueToDefault)
+TEST_F(TestBoard, CreateAndSetvectorSizetoZeroAndMinusCatchLogicErrorAndChangValueToDefault)
 {
 	IBoard * Iboard = new Board(-1);
 	ASSERT_THAT(Iboard->getvectorSize(), BOARDSIZE);
@@ -497,7 +528,7 @@ TEST(TestBoard, CreateAndSetvectorSizetoZeroAndMinusCatchLogicErrorAndChangValue
 	ASSERT_THAT(Iboard2->getvectorSize(), BOARDSIZE);
 	delete Iboard2;
 }
-	TEST(TestBoard, TestBoardFillItFields)
+	TEST_F(TestBoard, TestBoardFillItFields)
 	{
 		IBoard * Iboard = new Board(3);
 		Iboard->clear();
@@ -512,7 +543,7 @@ TEST(TestBoard, CreateAndSetvectorSizetoZeroAndMinusCatchLogicErrorAndChangValue
 		delete Iboard;
 	}
 
-TEST(TestBoard, TestBoardScore)
+TEST_F(TestBoard, TestBoardScore)
 {
 	IBoard * Iboard = new Board(3);
 	ASSERT_EQ(Iboard->getScore(), 0);
@@ -520,7 +551,7 @@ TEST(TestBoard, TestBoardScore)
 	ASSERT_EQ(Iboard->setScore(), 2);
 	delete Iboard;
 }
-TEST(TestBoard, TestDrawSnakeOnBoard)
+TEST_F(TestBoard, TestDrawSnakeOnBoard)
 {
 	int expected = BOARDSIZE / 2;
 	IBoard * Iboard = new Board(BOARDSIZE);
@@ -556,7 +587,7 @@ TEST(TestMockSnake, createMockSnakeAndPutCoordinatesOfSnakeHeadOnTheBoard)
 	delete board;	delete coord;	delete mSnake;
 }
 
-TEST(TestBoard, PrintSnakeOnBoardUsingCoordMock)
+TEST_F(TestBoard, PrintSnakeOnBoardUsingCoordMock)
 {
 	using::testing::Return;
 	MockCoord * mCoord = new MockCoord();
@@ -581,7 +612,7 @@ TEST(TestBoard, PrintSnakeOnBoardUsingCoordMock)
 	delete board, mCoord, snake;
 }
 
-TEST(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
+TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
 {
 	using::testing::Return;
 	ICoord * expCoord = new Coord(0,7);
@@ -613,7 +644,7 @@ TEST(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
 	delete board, mCoord, snake;
 }
 
-TEST(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
+TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
 {
 	using::testing::Return;
 	ICoord * expCoord = new Coord(0, (BOARDSIZE - 2));
@@ -655,7 +686,7 @@ TEST(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
 	delete board, mCoord, snake;
 }
 
-TEST(TestBoard, SnakeMoveOnBordTwoFieldEeatsAnAppleAndGrows)
+TEST_F(TestBoard, SnakeMoveOnBordTwoFieldEeatsAnAppleAndGrows)
 {
 	int size = BOARDSIZE / 2; //7
 	ICoord * coord = new Coord(size, size);
@@ -682,7 +713,7 @@ TEST(TestBoard, SnakeMoveOnBordTwoFieldEeatsAnAppleAndGrows)
 	delete board, coord, snake, apple;
 }
 
-TEST(TestBoard, SnakeMoveOnBordAndHitItself)
+TEST_F(TestBoard, SnakeMoveOnBordAndHitItself)
 {
 	int size = BOARDSIZE / 2; //7
 	ISnake * snake = new Snake(new Coord(1,0));
@@ -705,7 +736,7 @@ TEST(TestBoard, SnakeMoveOnBordAndHitItself)
 
  }
 
-TEST(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
+TEST_F(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
 {
 	int size = BOARDSIZE / 2; //7
 	ISnake * snake = new Snake(new Coord(1, 0));
@@ -745,7 +776,7 @@ TEST(TestBoard, SnakeMoveOnBordEeatsTwoApplesGrowsAndHitHisBody)
 
 }
 
-TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
+TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 {
 	int size = BOARDSIZE / 2; //7
 	int numberOfeatedApples = 0;
@@ -776,7 +807,7 @@ TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 	delete board, snake, apple;
 }
 
-TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20)
+TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20)
 {
 	int size = BOARDSIZE / 2; //7
 	int numberOfeatedApples = 0;
@@ -812,7 +843,7 @@ TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20
 	delete board, snake, apple;
 }
 
-TEST(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIsNoSpaceAngGameEnds)
+TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIsNoSpaceAngGameEnds)
 {
 	using::testing::Return;
 	int size = BOARDSIZE / 2; //7
@@ -869,18 +900,28 @@ bool compareCoordsAreNotEq(ICoord *  P1, ICoord *  P2)
 
 //========================================================================================================
 //===========================================APPLE TEST===================================================
+class TestApple : public ::testing::Test {
+protected:
+	IApple * apple;
+	int expected = BOARDSIZE / 2;
 
-TEST(TestApple, CreateAppleInstanceWithDefaultConstructor)
+	void SetUp() override
+	{
+		apple = new Apple();
+	}
+
+	void TearDown() override
+	{
+		delete apple;
+	}
+};
+
+TEST_F(TestApple, CreateAppleInstanceWithDefaultConstructor)
 {
-	IApple * apple = new Apple(); //BOARDSIZE/2-1
-
-	EXPECT_EQ(apple->getAppleCoordX() , BOARDSIZE / 2 - 1); 
-	EXPECT_EQ(apple->getAppleCoordY() , BOARDSIZE / 2 - 1);
-
-	delete apple;
+	compareCoordValues(apple->getAppleCoords(), expected - 1, expected - 1);
 }
 
-TEST(TestApple, CreateAppleInstancesWithDifrentValues)
+TEST_F(TestApple, CreateAppleInstancesWithDifrentValues)
 {
 	IApple * apple = new Apple(3 ,5);
 	IApple * apple2 = new Apple(3, 123);
@@ -898,7 +939,7 @@ TEST(TestApple, CreateAppleInstancesWithDifrentValues)
 	delete apple, apple2;
 }
 
-TEST(TestApple, PutAndPrintAppleAndSnakeOnBoardDuringCreation)
+TEST_F(TestApple, PutAndPrintAppleAndSnakeOnBoardDuringCreation)
 {
 	ISnake * snake = new Snake(new Coord());
 	IApple * apple = new Apple(new Coord());
@@ -910,7 +951,7 @@ TEST(TestApple, PutAndPrintAppleAndSnakeOnBoardDuringCreation)
 	delete apple, snake, board;
 }
 
-TEST(TestApple, PutAndPrintAppleOnBoardOnTheSameLocationAsSnakeHasDuringCreation)
+TEST_F(TestApple, PutAndPrintAppleOnBoardOnTheSameLocationAsSnakeHasDuringCreation)
 {
 	IApple * apple = new Apple(5 , 7);
 	ISnake * snake = new Snake(5 , 7);
@@ -923,7 +964,7 @@ TEST(TestApple, PutAndPrintAppleOnBoardOnTheSameLocationAsSnakeHasDuringCreation
 	delete apple, snake, board;
 }
 
-TEST(TestApple, PutAndPrintAppleOnBoardwhenOnlyOneFieldIsEmptyRestIsSnakeBody)
+TEST_F(TestApple, PutAndPrintAppleOnBoardwhenOnlyOneFieldIsEmptyRestIsSnakeBody)
 {
 	IApple * apple = new Apple(new Coord(0,1));
 	ISnake * snake = new Snake(new Coord(0,0));
@@ -949,7 +990,7 @@ TEST(TestApple, PutAndPrintAppleOnBoardwhenOnlyOneFieldIsEmptyRestIsSnakeBody)
 	delete apple, snake, board;
 }
 
-TEST(TestApple, EveryTimeAppleIsPrintedOnRandomEmptyField)
+TEST_F(TestApple, EveryTimeAppleIsPrintedOnRandomEmptyField)
 {
 	IApple * apple = new Apple(new Coord(0, 1));
 	ISnake * snake = new Snake(new Coord(0, 0));
@@ -978,7 +1019,7 @@ TEST(TestApple, EveryTimeAppleIsPrintedOnRandomEmptyField)
 
 }
 
-TEST(TestApple, NospaceForApple)
+TEST_F(TestApple, NospaceForApple)
 {
 	IApple * apple = new Apple(new Coord());
 	ISnake * snake = new Snake(new Coord());
