@@ -57,18 +57,13 @@ void Board::drawSnakeOnBoard(int x, int y)
 
 void Board::drawSnakeOnBoardbyIcoord()
 {
-	int x = (snakeIntrface->getSnakeHead())->getCoordX();
-	int y = (snakeIntrface->getSnakeHead())->getCoordY();
-	
-	vec2D.at(x).at(y) = 'o';
+	setvectorCoord ((snakeIntrface->getSnakeHead())->getCoordX(),  
+					((snakeIntrface->getSnakeHead())->getCoordY()), 'o');
 }
 
 void Board::drawApplOnBoardbyIcoord()
 {
-	int x = appleInterface->getAppleCoordX();
-	int y = appleInterface->getAppleCoordY();
-
-	if (getvectorCoord(x, y) == 'o') 
+	if (getvectorCoord(appleInterface->getAppleCoordX(), appleInterface->getAppleCoordY()) == 'o')
 	{
 		appleInterface->putRandomAppleOnboard();
 		drawApplOnBoardbyIcoord();
