@@ -16,7 +16,7 @@ public:
 	ICoord * changeSnakeHeadCoordinates(char _direction);
 	void setSnakeTail();
 	bool snakeHitItself();
-	void putSnakeHeadCoorinatesToDeque(Coord& _snakeHead);
+	void putSnakeHeadCoorinatesToDeque(Coord _snakeHead);
 	// getters and setters methods:
 	char getDirection();
 	ICoord * getSnakeHead();

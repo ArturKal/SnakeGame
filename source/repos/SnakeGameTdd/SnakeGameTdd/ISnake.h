@@ -13,7 +13,7 @@ public:
 	virtual ICoord * changeSnakeHeadCoordinates(char _direction) = 0;
 	virtual void setSnakeTail() = 0;
 	virtual bool snakeHitItself() = 0;
-	virtual void putSnakeHeadCoorinatesToDeque(Coord& _snakeHead) = 0;
+	virtual void putSnakeHeadCoorinatesToDeque(Coord _snakeHead) = 0;
 	// getters and setters methods:
 	virtual char getDirection() = 0;
 	virtual ICoord * getSnakeHead() = 0;

@@ -42,24 +42,30 @@ char Snake::setDirection(char moveKey)
 
 ICoord * Snake::changeSnakeHeadCoordinates(char _direction)
 {
-	Coord coords(snakeHead->getCoordX(), snakeHead->getCoordY());
+	int Xx = snakeHead->getCoordX();
+	int Yy = snakeHead->getCoordY();
+	Coord coords(Xx, Yy);
+	//putSnakeHeadCoorinatesToDeque(Coord (getSnakeHead()->getCoordX(), (getSnakeHead()->getCoordY())));
 	putSnakeHeadCoorinatesToDeque(coords);
+
 
 	if (direction == 'u')
 	{
-		snakeHead->setCoordX( snakeHead->getCoordX()-1 );
+		//getSnakeHead()->setCoordX(getSnakeHead()->getCoordX()-1 );
+		getSnakeHead()->setCoordX(Xx - 1);
 	}
 	if (direction == 'd')
 	{
-		snakeHead->setCoordX(snakeHead->getCoordX() + 1);
+		//getSnakeHead()->setCoordX(getSnakeHead()->getCoordX() + 1);
+		getSnakeHead()->setCoordX(Xx + 1);
 	}
 	if (direction == 'l')
 	{
-		snakeHead->setCoordY( (snakeHead->getCoordY() -1) );
+		getSnakeHead()->setCoordY(Yy - 1);
 	}
 	if (direction == 'r')
 	{
-		snakeHead->setCoordY(snakeHead->getCoordY() + 1);
+		getSnakeHead()->setCoordY(Yy + 1);
 	}
 
 	return snakeHead;
@@ -96,7 +102,7 @@ bool Snake::snakeHitItself()
 	return endGame;
 }
 
-void Snake::putSnakeHeadCoorinatesToDeque(Coord& _snakeHead)
+void Snake::putSnakeHeadCoorinatesToDeque(Coord _snakeHead)
 {
 	Coord_Container.push_back(_snakeHead); //put coordinates of snake head at the end
 }
