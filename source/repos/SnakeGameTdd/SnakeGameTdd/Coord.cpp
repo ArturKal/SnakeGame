@@ -23,8 +23,8 @@ Coord::Coord(int x, int y)
 	catch (std::runtime_error & e)
 	{
 		std::cout << "Runtime error: " << e.what();
-			if (x > BOARDSIZE) x = 0;
-			if (y > BOARDSIZE) y = 0;
+			if (x >= BOARDSIZE) x = 0;
+			if (y >= BOARDSIZE) y = 0;
 			if (x < 0 ) x = BOARDSIZE-1;
 			if (y < 0 ) y = BOARDSIZE-1;
 	}

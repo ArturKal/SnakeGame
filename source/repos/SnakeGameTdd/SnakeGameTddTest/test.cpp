@@ -228,7 +228,47 @@ TEST_F(TestSnake, MoveSnakeToRightOnBoardAndPutSnakeHeadCoordinatesToDeque)
 		compareSnakeHeadCoord(snake, expected - 1, expected + 1);
 	}
 
-TEST_F(TestSnake, SnakeReachedTheBoardEndGMOCK)
+TEST_F(TestSnake, GetSnakeSeadCoordXFourTimes)
+{
+	using::testing::Return;
+	MockCoord * mCoord = new MockCoord();
+		EXPECT_CALL(*mCoord, getCoordY()).Times(4)
+		.WillOnce(Return(1))
+		.WillOnce(Return(2))
+		.WillOnce(Return(3))
+		.WillRepeatedly(Return(0));
+
+	snake = new Snake(mCoord);
+
+	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 1);
+	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 2);
+	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 3);
+	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 0);
+}
+
+TEST_F(TestSnake, SnakeMovedRightReachedTheBoardEndheadCoordinatesAreSetFrom15to0andThenfrom0to1)
+{
+	using::testing::Return;
+	using::testing::_;
+	MockCoord * mCoord = new MockCoord();
+	snake = new Snake(mCoord);
+
+
+	EXPECT_CALL(*mCoord, setCoordY(15)).Times(1).WillOnce(Return(0));
+	EXPECT_CALL(*mCoord, setCoordY(1)).Times(1).WillOnce(Return(1));
+
+	EXPECT_CALL(*mCoord, getCoordY()).Times(4)
+		.WillOnce(Return(14)).WillOnce(Return(14))
+		.WillOnce(Return(0)).WillOnce(Return(0));
+
+	EXPECT_CALL(*mCoord, getCoordX())
+		.WillRepeatedly(Return(0));
+
+	compareCoordValues(snake->changeSnakeHeadCoordinates('r'), 0,14); //call twice
+	compareCoordValues(snake->changeSnakeHeadCoordinates('r'), 0, 0);
+}
+
+TEST_F(TestSnake, SnakeReachedTheBoardEnd)
 {
 	using::testing::Return;
 	using::testing::_;
@@ -242,22 +282,26 @@ TEST_F(TestSnake, SnakeReachedTheBoardEndGMOCK)
 	delete mCoord;
 }
 
-TEST_F(TestSnake, SnakeTakeMockCoordInConstructor)
-{
-	using::testing::Return;
-	int returnValue = 12;
-	int returnValueTwo = 7;
 
-	MockCoord * mCoord = new MockCoord();
-	snake = new Snake(mCoord);
+	using::testing::Return;								//#1	
 
-	EXPECT_CALL(*mCoord, getCoordX()).Times(1).WillRepeatedly(Return(returnValue));
-	EXPECT_CALL(*mCoord, getCoordY()).Times(1).WillRepeatedly(Return(returnValueTwo));
+	TEST_F(TestSnake, SnakeTakeMockCoordInConstructor)
+	{
+		int returnValue = 12, returnValueTwo = 7;
 
-	EXPECT_THAT(snake->getSnakeHead()->getCoordX(), returnValue);
-	EXPECT_THAT(snake->getSnakeHead()->getCoordY(), returnValueTwo);
-	delete mCoord;
-}
+		MockCoord * mCoord = new MockCoord();			//#2
+
+		EXPECT_CALL(*mCoord, getCoordX()).Times(1).		//#3
+			WillRepeatedly(Return(returnValue));
+		EXPECT_CALL(*mCoord, getCoordY()).Times(1).
+			WillRepeatedly(Return(returnValueTwo));
+
+		snake = new Snake(mCoord);						//#4
+
+		EXPECT_THAT(snake->getSnakeHead()->getCoordX(), returnValue);		//#5
+		EXPECT_THAT(snake->getSnakeHead()->getCoordY(), returnValueTwo);
+		delete mCoord;
+	}																		//#6
 
 TEST_F(TestSnake, SnakeReachedTheBoardEndTwice)
 {
@@ -447,24 +491,24 @@ TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinatesWithValuBiggerThanBoardsiz
 	compareCoordValues(Icoord, 0, 0);
 }
 
-	TEST_F(TestCoord, MockingSnakeMovesToRightAndLeftWhenSnakeCroosBoardSize)
-	{
-		using::testing::Return;
-		ICoord * snakeHead = new Coord(BOARDSIZE, 0);
-		ICoord * snakeHead1 = new Coord(0, -1);
-		MockSnake * mSnake = new MockSnake();
-	
-		EXPECT_CALL(*mSnake, getDirection()).WillOnce(Return('r'));
-		EXPECT_CALL(*mSnake, changeSnakeHeadCoordinates(mSnake->getDirection())).Times(1).WillRepeatedly(Return(Icoord));
+TEST_F(TestCoord, MockingSnakeMovesToRightAndLeftWhenSnakeCroosBoardSize)
+{
+	using::testing::Return;
+	using::testing::_;
 
-		EXPECT_CALL(*mSnake, getDirection()).WillOnce(Return('l'));
-		EXPECT_CALL(*mSnake, changeSnakeHeadCoordinates(mSnake->getDirection())).Times(1).WillRepeatedly(Return(Icoord));
+	MockSnake * mSnake = new MockSnake();
+	ICoord * snakeHead = new Coord(BOARDSIZE, 0);
+	ICoord * snakeHead1 = new Coord(0, -1);
 
-		compareCoordValues(snakeHead, 0, 0);
-		compareCoordValues(snakeHead1, 0, BOARDSIZE - 1);
+	EXPECT_CALL(*mSnake, changeSnakeHeadCoordinates(_)).Times(2)
+		.WillOnce(Return(snakeHead))
+		.WillOnce(Return(snakeHead1));
+
+	compareCoordValues(mSnake->changeSnakeHeadCoordinates('r'), 0, 0);
+	compareCoordValues(mSnake->changeSnakeHeadCoordinates('l'), 0, BOARDSIZE - 1);
 	
-		delete snakeHead, snakeHead1;
-	}
+	delete snakeHead, snakeHead1;
+}
 
 TEST_F(TestCoord, MockingSnakeMovesToUpAndDownWhenSnakeCroosBoardSize)
 {
