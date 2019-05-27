@@ -1100,3 +1100,107 @@ TEST_F(TestApple, NospaceForApple)
 
 	delete apple, snake, board;
 }
+
+TEST(TestMocks, TestSnakeUsingNiceMockUninterestingcallsIgnore)
+{
+	using::testing::NiceMock;
+	NiceMock<MockCoord> * mCoord =	new NiceMock<MockCoord>;
+	ISnake * snake = new Snake(mCoord);
+	IBoard * board = new Board(snake, BOARDSIZE);
+
+	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(3));
+	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(3));
+	compareCoordValues(snake->getSnakeHead(), 3, 3);
+}
+
+TEST(TestMocks, TestSnakeUsingStrictMock)
+{
+	using::testing::StrictMock;
+	StrictMock<MockCoord> * mCoord = new StrictMock<MockCoord>;
+	ISnake * snake = new Snake(mCoord);
+
+	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(0)).WillOnce(Return(3));
+	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(0)).WillOnce(Return(3));
+
+	IBoard * board = new Board(snake, BOARDSIZE);
+	compareCoordValues(snake->getSnakeHead() , 3,3);
+}
+
+TEST(TestMocks, TestSnakeEatsApple)
+{
+	using::testing::StrictMock;
+	StrictMock<MockCoord> * mCoord = new StrictMock<MockCoord>;
+	//MockCoord * mCoord = new MockCoord;
+	ISnake * snake = new Snake(mCoord);
+	IApple * apple = new Apple(4,4);
+	
+	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(3)).WillOnce(Return(4));
+	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(3)).WillOnce(Return(4));
+	
+	IBoard * board = new Board(snake, apple, BOARDSIZE);
+
+	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(4)).WillOnce(Return(4)); //calls in constructor
+	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(4)).WillOnce(Return(4)); //calls in constructor
+	compareCoordValues(apple->getAppleCoords(), 4, 4); //before call SnakeEatsApple
+
+	board->SnakeEatsApple();
+	EXPECT_TRUE(board->eatApple);
+	ASSERT_EQ(snake->getSnakeLength() , 3);
+	compareCoordValues(snake->getSnakeHead(), 4, 4);
+}
+
+TEST(TestMocks, TestSnakeDontEatsApple)
+{
+	using::testing::StrictMock;
+	StrictMock<MockCoord> * mCoord = new StrictMock<MockCoord>;
+	//MockCoord * mCoord = new MockCoord;
+	ISnake * snake = new Snake(mCoord);
+	IApple * apple = new Apple(5, 5);
+
+	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(3)).WillOnce(Return(4));//calls in constructor
+	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(3)).WillOnce(Return(4));//calls in constructor
+
+	IBoard * board = new Board(snake, apple, BOARDSIZE);
+	compareCoordValues(apple->getAppleCoords(), 5, 5); //before call SnakeEatsApple
+
+	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(4))
+		.WillOnce(Return(4))
+		.WillOnce(Return(4));
+	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(4))
+		.WillOnce(Return(5))
+		.WillOnce(Return(4));
+	EXPECT_CALL(*mCoord, setCoordY(5)).WillOnce(Return(5));
+
+	snake->changeSnakeHeadCoordinates(snake->getDirection()); //add head to cont and chceck borders
+	board->SnakeEatsApple();
+	
+	EXPECT_FALSE(board->eatApple);
+	ASSERT_EQ(snake->getSnakeLength(), 2);
+	EXPECT_EQ(snake->getCoord_Container().size(), 1);
+
+	compareCoordValues(snake->getSnakeHead(), 4, 5);
+}
+
+TEST(TestMocks, TestSnakedrawSetUpBoardAndDrawSnakeOnBoardbyIcoord)
+{
+	using::testing::StrictMock;
+	StrictMock<MockSnake> * mSnake = new StrictMock<MockSnake>;
+	IApple * apple = new Apple(5, 5);
+
+	EXPECT_CALL(*mSnake, getSnakeHead()).WillOnce(Return(new Coord(2, 2)))
+		.WillOnce(Return(new Coord(2, 2)))
+		.WillOnce(Return(new Coord(2, 2)))
+		.WillOnce(Return(new Coord(2, 2)))
+		.WillOnce(Return(new Coord(2, 2)));
+
+	IBoard * board = new Board(mSnake, apple, BOARDSIZE);
+	compareCoordValues(mSnake->getSnakeHead() , 2,2);
+
+	EXPECT_CALL(*mSnake, getDirection()).WillRepeatedly(Return('r'));
+	EXPECT_EQ(mSnake->getDirection(), 'r');
+	EXPECT_CALL(*mSnake, changeSnakeHeadCoordinates('r'))
+		.WillOnce(Return(new Coord(2, 2)));
+
+	board->setvectorCoord(mSnake->getSnakeHead()->getCoordX(), mSnake->getSnakeHead()->getCoordY(), 'o' );
+	EXPECT_EQ(board->getvectorCoord(2,2), 'o');
+}
