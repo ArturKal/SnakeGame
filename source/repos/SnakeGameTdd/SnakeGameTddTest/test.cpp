@@ -318,34 +318,6 @@ TEST_F(TestSnake, SnakeReachedTheBoardEndTwice)
 	EXPECT_EQ(snake->getCoord_Container().size() , 2);
 }
 
-	TEST_F(TestSnake, SetSnakeTailUsingDefaultActionMock)
-	{
-		using::testing::Return;
-		MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
-		snake = new Snake(mCoord);
-
-		ON_CALL(*mCoord , getCoordX()).WillByDefault(Return (3));
-		ON_CALL(*mCoord , getCoordY()).WillByDefault(Return(2));
-
-		snake->setSnakeTail();
-		compareCoordValues(snake->getSnakeHead(), 3, 2);
-		compareCoordValues(snake->getSnakeTail(), 3, 2);
-	}
-
-
-	TEST_F(TestSnake, SetSnakeTailUsingDefaultActionMock2)
-	{
-		using::testing::Return;
-		MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
-		snake = new Snake(mCoord);
-
-		ON_CALL(*mCoord, getCoordX()).WillByDefault(Return(3));
-		ON_CALL(*mCoord, getCoordY()).WillByDefault(Return(2));
-
-		snake->setSnakeTail();
-		compareCoordValues(snake->getSnakeHead(), 3, 2);
-		compareCoordValues(snake->getSnakeTail(), 3, 2);
-	}
 TEST_F(TestSnake, SnakeMovesRigtOneFildSetSnakeTail)
 {
 	coord = new Coord(5, 5); //snake tail [5,5]
@@ -1111,6 +1083,8 @@ TEST(TestMocks, TestSnakeUsingNiceMockUninterestingcallsIgnore)
 	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(3));
 	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(3));
 	compareCoordValues(snake->getSnakeHead(), 3, 3);
+	delete snake, board;
+
 }
 
 TEST(TestMocks, TestSnakeUsingStrictMock)
@@ -1124,12 +1098,14 @@ TEST(TestMocks, TestSnakeUsingStrictMock)
 
 	IBoard * board = new Board(snake, BOARDSIZE);
 	compareCoordValues(snake->getSnakeHead() , 3,3);
+	delete  snake, board;
 }
 
 TEST(TestMocks, TestSnakeEatsApple)
 {
 	using::testing::StrictMock;
 	StrictMock<MockCoord> * mCoord = new StrictMock<MockCoord>;
+	
 	//MockCoord * mCoord = new MockCoord;
 	ISnake * snake = new Snake(mCoord);
 	IApple * apple = new Apple(4,4);
@@ -1147,6 +1123,7 @@ TEST(TestMocks, TestSnakeEatsApple)
 	EXPECT_TRUE(board->eatApple);
 	ASSERT_EQ(snake->getSnakeLength() , 3);
 	compareCoordValues(snake->getSnakeHead(), 4, 4);
+	delete apple, snake, board;
 }
 
 TEST(TestMocks, TestSnakeDontEatsApple)
@@ -1179,13 +1156,17 @@ TEST(TestMocks, TestSnakeDontEatsApple)
 	EXPECT_EQ(snake->getCoord_Container().size(), 1);
 
 	compareCoordValues(snake->getSnakeHead(), 4, 5);
+	delete apple, snake, board;
 }
 
 TEST(TestMocks, TestSnakedrawSetUpBoardAndDrawSnakeOnBoardbyIcoord)
 {
+	using::testing::DefaultValue;
 	using::testing::StrictMock;
 	StrictMock<MockSnake> * mSnake = new StrictMock<MockSnake>;
 	IApple * apple = new Apple(5, 5);
+
+	DefaultValue<Coord>::Set(new Coord(2, 2));
 
 	EXPECT_CALL(*mSnake, getSnakeHead()).WillOnce(Return(new Coord(2, 2)))
 		.WillOnce(Return(new Coord(2, 2)))
@@ -1203,4 +1184,77 @@ TEST(TestMocks, TestSnakedrawSetUpBoardAndDrawSnakeOnBoardbyIcoord)
 
 	board->setvectorCoord(mSnake->getSnakeHead()->getCoordX(), mSnake->getSnakeHead()->getCoordY(), 'o' );
 	EXPECT_EQ(board->getvectorCoord(2,2), 'o');
+	delete apple, mSnake, board;
+}
+
+TEST(TestMocks, SetUpDefaulValueCoord)
+{
+	using::testing::AnyNumber;
+	using::testing::DefaultValue;
+	using::testing::StrictMock;
+
+	StrictMock<MockSnake> * snake = new StrictMock<MockSnake>;
+	
+	ICoord * coord = new Coord(3, 4);
+	DefaultValue<ICoord*>::Set(coord);
+	
+	EXPECT_CALL(*snake, changeSnakeHeadCoordinates('r')).Times(AnyNumber());;
+	EXPECT_CALL(*snake , getSnakeHead()).Times(AnyNumber());
+
+	compareCoordValues( snake->changeSnakeHeadCoordinates('r') , 3,4);
+	compareCoordValues(snake->getSnakeHead(), 3, 4);
+	DefaultValue<Coord>::Clear(); // unset Default Value
+	delete snake, coord;
+}
+
+TEST(TestMocks, SetSnakeTailUsingDefaultActionMock)
+{
+	using::testing::Return;
+	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+	ISnake* snake = new Snake(mCoord);
+
+	ON_CALL(*mCoord, getCoordX()).WillByDefault(Return(3));
+	ON_CALL(*mCoord, getCoordY()).WillByDefault(Return(2));
+	snake->setSnakeTail();
+	compareCoordValues(snake->getSnakeHead(), 3, 2);
+	compareCoordValues(snake->getSnakeTail(), 3, 2);
+	delete snake, mCoord;
+}
+
+
+TEST(TestMocks, SetSnakeTailUsingDefaultActionMock2)
+{
+	using::testing::Return;
+	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+	ISnake* snake = new Snake(mCoord);
+
+	ON_CALL(*mCoord, getCoordX()).WillByDefault(Return(3));
+	ON_CALL(*mCoord, getCoordY()).WillByDefault(Return(2));
+
+	snake->setSnakeTail();
+	compareCoordValues(snake->getSnakeHead(), 3, 2);
+	compareCoordValues(snake->getSnakeTail(), 3, 2);
+	delete snake, mCoord;
+}
+
+TEST(TestMocks, SetExpectCallinSequence)
+{
+	using::testing::Return;
+	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+	ISnake* snake = new Snake(mCoord);
+
+/*#4*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(43)).RetiresOnSaturation();
+/*#3*/	EXPECT_CALL(*mCoord, setCoordX(3)).WillOnce(Return(11));
+/*#2*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(10)).RetiresOnSaturation();;
+/*#1*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(4)).RetiresOnSaturation();
+
+/*	for (int i = 3; i > 0; i--) {
+		EXPECT_CALL(*mCoord, setCoordX(::testing::_))
+			.WillOnce(Return(10 * i))
+			.RetiresOnSaturation();
+		}*/
+	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 4); //#1
+	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);//#2
+	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);//#3
+	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);//#4
 }
