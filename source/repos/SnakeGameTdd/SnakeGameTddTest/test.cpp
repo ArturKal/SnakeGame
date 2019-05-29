@@ -1237,24 +1237,42 @@ TEST(TestMocks, SetSnakeTailUsingDefaultActionMock2)
 	delete snake, mCoord;
 }
 
-TEST(TestMocks, SetExpectCallinSequence)
+TEST(TestMocks, SetSnakeTailExpectCallInDefaultSequence)
 {
 	using::testing::Return;
 	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
 	ISnake* snake = new Snake(mCoord);
 
-/*#4*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(43)).RetiresOnSaturation();
-/*#3*/	EXPECT_CALL(*mCoord, setCoordX(3)).WillOnce(Return(11));
-/*#2*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(10)).RetiresOnSaturation();;
-/*#1*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(4)).RetiresOnSaturation();
+/*4*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(43)).RetiresOnSaturation();
+/*3*/	EXPECT_CALL(*mCoord, setCoordX(3)).WillOnce(Return(11));
+/*2*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(10)).RetiresOnSaturation();
+/*1*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(4)).RetiresOnSaturation();
 
-/*	for (int i = 3; i > 0; i--) {
-		EXPECT_CALL(*mCoord, setCoordX(::testing::_))
-			.WillOnce(Return(10 * i))
-			.RetiresOnSaturation();
-		}*/
-	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 4); //#1
-	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);//#2
-	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);//#3
-	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);//#4
+/*1*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 4);
+/*2*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);
+/*3*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);
+/*4*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);
+delete snake, mCoord;
 }
+
+TEST(TestMocks, expectedCallsToOccurInAstrictOrder)
+{
+	using::testing::InSequence;
+	using::testing::Return;
+	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+	ISnake* snake = new Snake(mCoord);
+
+	InSequence dummy;
+	{
+		/*1*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(4));
+		/*2*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(10));
+		/*3*/	EXPECT_CALL(*mCoord, setCoordX(3)).WillOnce(Return(11));
+		/*4*/	EXPECT_CALL(*mCoord, setCoordX(::testing::_)).WillOnce(Return(43));
+	}
+
+	/*1*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 4);
+	/*2*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);
+	/*3*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);
+	/*4*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);
+}
+
