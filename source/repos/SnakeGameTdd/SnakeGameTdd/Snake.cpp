@@ -45,18 +45,15 @@ ICoord * Snake::changeSnakeHeadCoordinates(char _direction)
 	int Xx = snakeHead->getCoordX();
 	int Yy = snakeHead->getCoordY();
 	Coord coords(Xx, Yy);
-	//putSnakeHeadCoorinatesToDeque(Coord (getSnakeHead()->getCoordX(), (getSnakeHead()->getCoordY())));
 	putSnakeHeadCoorinatesToDeque(coords);
 
 
 	if (direction == 'u')
 	{
-		//getSnakeHead()->setCoordX(getSnakeHead()->getCoordX()-1 );
 		getSnakeHead()->setCoordX(Xx - 1);
 	}
 	if (direction == 'd')
 	{
-		//getSnakeHead()->setCoordX(getSnakeHead()->getCoordX() + 1);
 		getSnakeHead()->setCoordX(Xx + 1);
 	}
 	if (direction == 'l')

@@ -86,20 +86,20 @@ std::vector<std::vector<char>> Board::clear() {
 void Board::printVector()
 {
 	//Upper Line 
-	for (int i = 0; i < (BOARDSIZE * 2 + 2); ++i) std::cout << "#"; std::cout << std::endl;
+	for (int i = 0; i < (BOARDSIZE * 2 + 2); ++i) std::cout << "8"; std::cout << std::endl;
 	for (auto vec : vec2D)
 	{
-		std::cout << "#";
+		std::cout << "8";
 		for (auto x : vec)
 		{
 			std::cout << x << " ";
 		}
 
-		if (vec.size() == BOARDSIZE) std::cout << "#";
+		if (vec.size() == BOARDSIZE) std::cout << "8";
 		std::cout << std::endl;
 	}
 	//Lower Line 
-	for (int i = 0; i < (BOARDSIZE * 2 + 2); ++i) std::cout << "#"; std::cout << std::endl;
+	for (int i = 0; i < (BOARDSIZE * 2 + 2); ++i) std::cout << "8"; std::cout << std::endl;
 }
 
 void Board::SnakeEatsApple()

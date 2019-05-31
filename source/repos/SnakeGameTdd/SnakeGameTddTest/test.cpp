@@ -420,6 +420,14 @@ TEST_F(TestCoord, CreateCoordInstanceAndGetCoordinates)
 	ASSERT_EQ(Icoord->getCoordY() , expected);
 }
 
+TEST_F(TestCoord, CheckBordersWithOverRangeValues)
+{
+	int Xcoord = BOARDSIZE;				int Ycoord = -1;
+	EXPECT_EQ(Icoord->checkBorders(Xcoord) , 0);
+	EXPECT_EQ(Icoord->checkBorders(Ycoord), BOARDSIZE-1);
+}
+
+
 TEST_F(TestCoord, CreateCoordInstanceAndSetCoordinates)
 {
 	int Xcoord = 4;				int Ycoord = 6;	
@@ -653,37 +661,35 @@ TEST_F(TestBoard, PrintSnakeOnBoardUsingCoordMock)
 	delete board, mCoord, snake;
 }
 
-TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
-{
-	using::testing::Return;
-	ICoord * expCoord = new Coord(0,7);
-	MockCoord * mCoord = new MockCoord();
-	ISnake * snake = new Snake(mCoord);
+	TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
+	{
+		using::testing::Return;
+		ICoord * expCoord = new Coord(0,7);
+		MockCoord * mCoord = new MockCoord();
+		ISnake * snake = new Snake(mCoord);
 
-	EXPECT_CALL(*mCoord, getCoordX()).WillRepeatedly(Return(0));
-	EXPECT_CALL(*mCoord, getCoordY()).Times(5).WillRepeatedly(Return(5));
+		EXPECT_CALL(*mCoord, getCoordX()).Times(::testing::AnyNumber()).WillRepeatedly(Return(0));
+		EXPECT_CALL(*mCoord, getCoordY())
+			.WillOnce(Return(5)).WillOnce(Return(5))
+			.WillOnce(Return(6)).WillOnce(Return(6))
+			.WillOnce(Return(7));
+		EXPECT_CALL(*mCoord, setCoordY(6)).Times(1);
+		EXPECT_CALL(*mCoord, setCoordY(7)).Times(1);
 
-	IBoard * board = new Board(snake, BOARDSIZE);
-	
-	EXPECT_EQ(board->getvectorCoord(0, 5), 'o');
-	EXPECT_CALL(*mCoord, setCoordY(6)).Times(1);
-	snake->changeSnakeHeadCoordinates(snake->getDirection()); 
-	EXPECT_EQ(snake->getCoord_Container().size(), 1);
+		IBoard * board = new Board(snake, BOARDSIZE);
 
-	EXPECT_CALL(*mCoord, getCoordY()).Times(6).WillRepeatedly(Return(6));
-	board->drawSnakeOnBoardbyIcoord();
-	EXPECT_EQ(board->getvectorCoord(0, 6), 'o');
+		EXPECT_EQ(board->getvectorCoord(0, 5), 'o');
+			snake->changeSnakeHeadCoordinates(snake->getDirection()); 
+		EXPECT_EQ(snake->getCoord_Container().size(), 1);
+			board->drawSnakeOnBoardbyIcoord();
+		EXPECT_EQ(board->getvectorCoord(0, 6), 'o');
+			snake->changeSnakeHeadCoordinates(snake->getDirection()); 
+		EXPECT_EQ(snake->getCoord_Container().size(), 2);
+			board->drawSnakeOnBoardbyIcoord();
+		EXPECT_EQ(board->getvectorCoord(0, 7), 'o');
 
-	EXPECT_CALL(*mCoord, setCoordY(7)).Times(1);
-	snake->changeSnakeHeadCoordinates(snake->getDirection()); 
-	EXPECT_EQ(snake->getCoord_Container().size(), 2);
-
-	EXPECT_CALL(*mCoord, getCoordY()).Times(7).WillRepeatedly(Return(7));
-	board->drawSnakeOnBoardbyIcoord();
-	EXPECT_EQ(board->getvectorCoord(0, 7), 'o');
-
-	delete board, mCoord, snake;
-}
+		delete board, mCoord;
+	}
 
 TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
 {
@@ -842,40 +848,41 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 	delete apple;
 }
 
-TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20)
-{
-	int numberOfeatedApples = 0;
-	snake = new Snake(new Coord(BOARDSIZE / 2, 0));
-	IApple * apple = new Apple(new Coord());
-	Iboard = new Board(snake, apple, BOARDSIZE);
-
-	int counter = 0;
-	int numberOfEatApple = 0;
-
-	for (;  ; )
+	TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApplesUntilHislengthIs20)
 	{
-		snake->changeSnakeHeadCoordinates(snake->getDirection()); //add head to cont and chceck borders
-		if (counter == BOARDSIZE + 1) {
-			snake->setDirection('s');
-			counter = 0;
-		}
-		else
-			snake->setDirection('d');
-		Iboard->drawSnakeOnBoardbyIcoord();
-		Iboard->SnakeEatsApple(); //put random apple on '.' field	
-		if (Iboard->eatApple) numberOfEatApple++;
-		Iboard->drawApplOnBoardbyIcoord();
-		counter++;
+		int numberOfeatedApples = 0;
+		snake = new Snake(new Coord(BOARDSIZE / 2, 0));
+		IApple * apple = new Apple(new Coord());
+		Iboard = new Board(snake, apple, BOARDSIZE);
 
-		if (snake->getSnakeLength() == 20)
+		int counter = 0;
+		int numberOfEatApple = 0;
+
+		for (;  ; )
 		{
-			break;
+			snake->changeSnakeHeadCoordinates(snake->getDirection()); 
+			//add head to cont and chceck borders
+			if (counter == BOARDSIZE + 1) {
+				snake->setDirection('s');
+				counter = 0;
+			}
+			else
+				snake->setDirection('d');
+			Iboard->drawSnakeOnBoardbyIcoord();
+			Iboard->SnakeEatsApple(); //put random apple on '.' field	
+			if (Iboard->eatApple) numberOfEatApple++;
+			Iboard->drawApplOnBoardbyIcoord();
+			counter++;
+
+			if (snake->getSnakeLength() == 20)
+			{
+				break;
+			}
 		}
-	}
 	
-	EXPECT_EQ(snake->getSnakeLength(), 20);
-	delete apple;
-}
+		EXPECT_EQ(snake->getSnakeLength(), 20);
+		delete apple;
+	}
 
 TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIsNoSpaceAngGameEnds)
 {
@@ -885,11 +892,9 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIs
 	
 	MockApple * mApple = new MockApple();
 	EXPECT_CALL(*mApple , getAppleCoords()).WillRepeatedly(Return(new Coord(BOARDSIZE / 2, size+1 - size)));
-	//EXPECT_CALL(*mApple , getAppleCoordX()).Times(6).WillRepeatedly(Return(7));
-	//EXPECT_CALL(*mApple, getAppleCoordY()).Times(6).WillRepeatedly(Return(1));
+
 
 	EXPECT_CALL(*mApple, getAppleCoordY()).WillRepeatedly(Return(11));
-	//EXPECT_CALL(*mApple , putRandomAppleOnboard()).Times(2).WillRepeatedly(Return());
 
 	IBoard * board = new Board(snake, mApple, BOARDSIZE);
 
@@ -899,11 +904,6 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIs
 	board->SnakeEatsApple(); //put random apple on '.' field	
 	
 	EXPECT_EQ(mApple->getAppleCoords()->getCoordY(), snake->getSnakeHead()->getCoordY());
-	//EXPECT_TRUE(board->eatApple);
-
-	//board->drawApplOnBoardbyIcoord();
-	//board->printVector();
-	//EXPECT_TRUE(board->eatApple);
 
 	EXPECT_EQ(mApple->getAppleCoords()->getCoordX() , 7);
 	EXPECT_EQ(mApple->getAppleCoords()->getCoordY(), 1);
@@ -1030,7 +1030,7 @@ TEST_F(TestApple, EveryTimeAppleIsPrintedOnRandomEmptyField)
 	ISnake * snake = new Snake(new Coord(0, 0));
 	IBoard * board = new Board(snake, apple, BOARDSIZE);
 
-	//set every field on board by snake body except field 0,0 witch is empty
+	//set each field on the board as a snake body with the exception of cx, witch is empty
 	for (int x = 0; x < BOARDSIZE; x++)
 	{
 		for (int y = 0; y < BOARDSIZE; y++)
@@ -1043,14 +1043,13 @@ TEST_F(TestApple, EveryTimeAppleIsPrintedOnRandomEmptyField)
 		int cx = rnd % BOARDSIZE;
 		int cy = rnd / BOARDSIZE;
 		board->setvectorCoord(cx, cy, '.');
-		EXPECT_EQ(board->getvectorCoord(cx, cy), '.');
+		EXPECT_EQ(board->getvectorCoord(cx, cy), '.'); //set empty field
 
 		board->drawApplOnBoardbyIcoord(); //drow random apple on empty field
-		EXPECT_EQ(board->getvectorCoord(cx, cy), 'x') << apple->getAppleCoords()->printCoordinates() << " cx " << cx << " cy " << cy;
+		EXPECT_EQ(board->getvectorCoord(cx, cy), 'x') << apple->getAppleCoords();
 		board->setvectorCoord(cx, cy, 'o');
 	}
-	delete apple, snake, board;
-
+	delete  snake, board;
 }
 
 TEST_F(TestApple, NospaceForApple)
@@ -1274,5 +1273,18 @@ TEST(TestMocks, expectedCallsToOccurInAstrictOrder)
 	/*2*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);
 	/*3*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);
 	/*4*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);
+}
+
+TEST(TestMocks, checkBordersWithOverRangeValuesUsingMock)
+{
+	using::testing::Ge;	using::testing::Lt;
+	MockCoord * mCoord = new MockCoord();
+
+	ON_CALL(*mCoord, checkBorders(Ge(14))).WillByDefault(Return(0));
+	ON_CALL(*mCoord, checkBorders(Lt(0))).WillByDefault(Return(BOARDSIZE-1));
+
+	EXPECT_EQ(	mCoord->checkBorders(15), 0);
+	EXPECT_EQ(mCoord->checkBorders(-1), 14);
+	EXPECT_EQ(mCoord->checkBorders(-2),14);
 }
 
