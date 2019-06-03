@@ -136,8 +136,6 @@ void Board::SnakeEatsApple()
 				snakeIntrface->getFieldToClear()->getCoordY(),
 				'.');
 		}
-		//else
-		//	std::cout << "ARTUR WYKASUJ TA LINIE";
 	}
 
 	if (SnakeEatAllApple)
