@@ -158,14 +158,15 @@ TEST_F(TestSnake, ExpectToThrowOutOfRangeException)
 		coord = new Coord(2, 3);
 		snake = new Snake(coord);
 		MockSnake * Msnake = new MockSnake();
-
 		std::deque<Coord> Coord_Container2 = { coord };
 		EXPECT_CALL(*Msnake, getCoord_Container()).WillOnce(::testing::Return(Coord_Container2));
 
+		Msnake->getCoord_Container();
 		EXPECT_THAT(snake->getCoord_Container(), ::testing::IsEmpty());
 			snake->putSnakeHeadCoorinatesToDeque(Coord (coord->getCoordX(), coord->getCoordY()));			
 		EXPECT_THAT(snake->getCoord_Container(), ::testing::SizeIs(1));
 		//EXPECT_THAT(snake->getCoord_Container(), ::testing::UnorderedElementsAre(::testing::Pointee( coord)));
+		delete Msnake;
 	}
 
 TEST_F(TestSnake, putHeadSnakeCoordinatesToDequeContainer)
@@ -244,6 +245,7 @@ TEST_F(TestSnake, GetSnakeSeadCoordXFourTimes)
 	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 2);
 	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 3);
 	EXPECT_EQ(snake->getSnakeHead()->getCoordY(), 0);
+	delete mCoord;
 }
 
 TEST_F(TestSnake, SnakeMovedRightReachedTheBoardEndheadCoordinatesAreSetFrom15to0andThenfrom0to1)
@@ -266,6 +268,7 @@ TEST_F(TestSnake, SnakeMovedRightReachedTheBoardEndheadCoordinatesAreSetFrom15to
 
 	compareCoordValues(snake->changeSnakeHeadCoordinates('r'), 0,14); //call twice
 	compareCoordValues(snake->changeSnakeHeadCoordinates('r'), 0, 0);
+	delete mCoord;
 }
 
 TEST_F(TestSnake, SnakeReachedTheBoardEnd)
@@ -487,7 +490,7 @@ TEST_F(TestCoord, MockingSnakeMovesToRightAndLeftWhenSnakeCroosBoardSize)
 	compareCoordValues(mSnake->changeSnakeHeadCoordinates('r'), 0, 0);
 	compareCoordValues(mSnake->changeSnakeHeadCoordinates('l'), 0, BOARDSIZE - 1);
 	
-	delete snakeHead, snakeHead1;
+	delete mSnake,snakeHead, snakeHead1;
 }
 
 TEST_F(TestCoord, MockingSnakeMovesToUpAndDownWhenSnakeCroosBoardSize)
@@ -507,7 +510,7 @@ TEST_F(TestCoord, MockingSnakeMovesToUpAndDownWhenSnakeCroosBoardSize)
 	compareCoordValues(snakeHead1, 0, 0);
 
 	delete snakeHead, snakeHead1;
-
+	testing::Mock::AllowLeak(mSnake);
 }
 
 //========================================================================================================
@@ -658,7 +661,7 @@ TEST_F(TestBoard, PrintSnakeOnBoardUsingCoordMock)
 				EXPECT_EQ(board->getvectorCoord(i, j), '.');
 		}
 	}
-	delete board, mCoord, snake;
+	delete mCoord, snake;
 }
 
 	TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightAndWasPrintOnBoard)
@@ -688,7 +691,7 @@ TEST_F(TestBoard, PrintSnakeOnBoardUsingCoordMock)
 			board->drawSnakeOnBoardbyIcoord();
 		EXPECT_EQ(board->getvectorCoord(0, 7), 'o');
 
-		delete board, mCoord;
+		delete mCoord, board;
 	}
 
 TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
@@ -730,7 +733,8 @@ TEST_F(TestBoard, SnakeMoveOnBordTwoFieldRightCrossBoardEndAndWasPrintOnBoard)
 				EXPECT_EQ(board->getvectorCoord(i, j), '.');
 		}
 	}
-	delete board, mCoord, snake;
+	delete board, mCoord, snake, expCoord;
+	testing::Mock::AllowLeak(mCoord);
 }
 
 TEST_F(TestBoard, SnakeMoveOnBordTwoFieldEeatsAnAppleAndGrows)
@@ -886,11 +890,13 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsApples)
 
 TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIsNoSpaceAngGameEnds)
 {
+	using::testing::NiceMock;
+	NiceMock<MockCoord> * mCoord = new NiceMock<MockCoord>;
 	using::testing::Return;
 	int size = BOARDSIZE / 2; //7
 	ISnake * snake = new Snake(new Coord(BOARDSIZE / 2, size - size));
 	
-	MockApple * mApple = new MockApple();
+	NiceMock < MockApple> * mApple = new NiceMock <MockApple>;
 	EXPECT_CALL(*mApple , getAppleCoords()).WillRepeatedly(Return(new Coord(BOARDSIZE / 2, size+1 - size)));
 
 
@@ -908,7 +914,7 @@ TEST_F(TestBoard, SnakeMoveOnWholeBoardCrossBordersAndEatsMockApplesUntilThereIs
 	EXPECT_EQ(mApple->getAppleCoords()->getCoordX() , 7);
 	EXPECT_EQ(mApple->getAppleCoords()->getCoordY(), 1);
 
-	delete board, snake, mApple;
+	delete mApple,board, snake;
 }
 //=============================================================================================
 //Helping Methods:
@@ -1082,7 +1088,7 @@ TEST(TestMocks, TestSnakeUsingNiceMockUninterestingcallsIgnore)
 	EXPECT_CALL(*mCoord, getCoordX()).WillOnce(Return(3));
 	EXPECT_CALL(*mCoord, getCoordY()).WillOnce(Return(3));
 	compareCoordValues(snake->getSnakeHead(), 3, 3);
-	delete snake, board;
+	delete mCoord,snake, board;
 
 }
 
@@ -1097,7 +1103,7 @@ TEST(TestMocks, TestSnakeUsingStrictMock)
 
 	IBoard * board = new Board(snake, BOARDSIZE);
 	compareCoordValues(snake->getSnakeHead() , 3,3);
-	delete  snake, board;
+	delete  mCoord,snake, board;
 }
 
 TEST(TestMocks, TestSnakeEatsApple)
@@ -1122,7 +1128,8 @@ TEST(TestMocks, TestSnakeEatsApple)
 	EXPECT_TRUE(board->eatApple);
 	ASSERT_EQ(snake->getSnakeLength() , 3);
 	compareCoordValues(snake->getSnakeHead(), 4, 4);
-	delete apple, snake, board;
+	delete apple, mCoord, snake, board;
+	testing::Mock::AllowLeak(mCoord);
 }
 
 TEST(TestMocks, TestSnakeDontEatsApple)
@@ -1156,6 +1163,7 @@ TEST(TestMocks, TestSnakeDontEatsApple)
 
 	compareCoordValues(snake->getSnakeHead(), 4, 5);
 	delete apple, snake, board;
+	testing::Mock::AllowLeak(mCoord);
 }
 
 TEST(TestMocks, TestSnakedrawSetUpBoardAndDrawSnakeOnBoardbyIcoord)
@@ -1184,6 +1192,7 @@ TEST(TestMocks, TestSnakedrawSetUpBoardAndDrawSnakeOnBoardbyIcoord)
 	board->setvectorCoord(mSnake->getSnakeHead()->getCoordX(), mSnake->getSnakeHead()->getCoordY(), 'o' );
 	EXPECT_EQ(board->getvectorCoord(2,2), 'o');
 	delete apple, mSnake, board;
+	testing::Mock::AllowLeak(mSnake);
 }
 
 TEST(TestMocks, SetUpDefaulValueCoord)
@@ -1209,7 +1218,9 @@ TEST(TestMocks, SetUpDefaulValueCoord)
 TEST(TestMocks, SetSnakeTailUsingDefaultActionMock)
 {
 	using::testing::Return;
-	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+	using::testing::NiceMock;
+	NiceMock<MockCoord> * mCoord = new NiceMock<MockCoord>;
+	//MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
 	ISnake* snake = new Snake(mCoord);
 
 	ON_CALL(*mCoord, getCoordX()).WillByDefault(Return(3));
@@ -1217,14 +1228,16 @@ TEST(TestMocks, SetSnakeTailUsingDefaultActionMock)
 	snake->setSnakeTail();
 	compareCoordValues(snake->getSnakeHead(), 3, 2);
 	compareCoordValues(snake->getSnakeTail(), 3, 2);
-	delete snake, mCoord;
+	delete mCoord,snake;
 }
 
 
 TEST(TestMocks, SetSnakeTailUsingDefaultActionMock2)
 {
 	using::testing::Return;
-	MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
+	using::testing::NiceMock;
+	NiceMock<MockCoord> * mCoord = new NiceMock<MockCoord>;
+	//MockCoord * mCoord = new MockCoord(); //snake tail [3,2]
 	ISnake* snake = new Snake(mCoord);
 
 	ON_CALL(*mCoord, getCoordX()).WillByDefault(Return(3));
@@ -1233,7 +1246,7 @@ TEST(TestMocks, SetSnakeTailUsingDefaultActionMock2)
 	snake->setSnakeTail();
 	compareCoordValues(snake->getSnakeHead(), 3, 2);
 	compareCoordValues(snake->getSnakeTail(), 3, 2);
-	delete snake, mCoord;
+	delete mCoord,snake;
 }
 
 TEST(TestMocks, SetSnakeTailExpectCallInDefaultSequence)
@@ -1251,7 +1264,7 @@ TEST(TestMocks, SetSnakeTailExpectCallInDefaultSequence)
 /*2*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);
 /*3*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);
 /*4*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);
-delete snake, mCoord;
+delete mCoord,snake ;
 }
 
 TEST(TestMocks, expectedCallsToOccurInAstrictOrder)
@@ -1273,12 +1286,14 @@ TEST(TestMocks, expectedCallsToOccurInAstrictOrder)
 	/*2*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(2), 10);
 	/*3*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(3), 11);
 	/*4*/	ASSERT_EQ(snake->getSnakeHead()->setCoordX(34), 43);
+	delete mCoord, snake;
 }
 
 TEST(TestMocks, checkBordersWithOverRangeValuesUsingMock)
 {
 	using::testing::Ge;	using::testing::Lt;
-	MockCoord * mCoord = new MockCoord();
+	using::testing::NiceMock;
+	NiceMock<MockCoord> * mCoord = new NiceMock<MockCoord>;
 
 	ON_CALL(*mCoord, checkBorders(Ge(14))).WillByDefault(Return(0));
 	ON_CALL(*mCoord, checkBorders(Lt(0))).WillByDefault(Return(BOARDSIZE-1));
@@ -1286,5 +1301,6 @@ TEST(TestMocks, checkBordersWithOverRangeValuesUsingMock)
 	EXPECT_EQ(	mCoord->checkBorders(15), 0);
 	EXPECT_EQ(mCoord->checkBorders(-1), 14);
 	EXPECT_EQ(mCoord->checkBorders(-2),14);
+	delete mCoord;
 }
 
